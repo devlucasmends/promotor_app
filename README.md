@@ -1,15 +1,10 @@
-# promotor_app
+# App Promotor Digital
 
-A new Flutter project.
+A mobile application aimed at the retail sector, but which can be employed in other areas dealing with products and requiring proper attention to their expiration dates. The objective of the application is to register the expiration dates of specific products and notify the user when the product enters the YELLOW zone (Attention Period) and the RED zone (Urgency Period).
 
 ## Getting Started
 
 This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
