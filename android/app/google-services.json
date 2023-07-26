@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "823306004360",
+    "project_id": "promotor-606e7",
+    "storage_bucket": "promotor-606e7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:823306004360:android:d125e4ee640091ac92bc3d",
+        "android_client_info": {
+          "package_name": "br.lm.promotor_digital"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "823306004360-dbldiq1iafho9fu3762015qj0mp5bcua.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsr6DPH2illcl26FDi-HjjBhG1ENe-bFg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "823306004360-dbldiq1iafho9fu3762015qj0mp5bcua.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
