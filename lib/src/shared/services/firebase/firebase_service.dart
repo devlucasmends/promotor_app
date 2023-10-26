@@ -1,6 +1,12 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
 abstract class FirebaseService {
   Future<void> initialize();
+
+  Future<void> signIn({required String email, required String password});
+
+  Future<void> signUp({
+    required String name,
+    required String phone,
+    required String email,
+    required String password,
+  });
 }
