@@ -1,5 +1,4 @@
 import 'package:mobx/mobx.dart';
-import 'package:promotor_app/src/shared/models/user_model.dart';
 import 'package:promotor_app/src/shared/repositories/auth/auth_repository.dart';
 part 'auth_store.g.dart';
 
@@ -11,14 +10,22 @@ abstract class AuthStoreBase with Store {
 
   AuthStoreBase(this._authRepository);
 
-  UserModel login({required String nome, required String senha}) {
-    print('chegou aqui');
+  Future<void> login({required String email, required String password}) async {
+    await _authRepository.signIn(email: email, password: password);
+    print('Passou do login');
+  }
 
-    _authRepository.signIn(email: nome, password: senha);
-
-    print(nome);
-    print(senha);
-
-    return UserModel(name: nome, password: senha);
+  Future<void> signUp({
+    required String name,
+    required String phone,
+    required String email,
+    required String password,
+  }) async {
+    await _authRepository.signUp(
+      name: name,
+      phone: phone,
+      email: email,
+      password: password,
+    );
   }
 }

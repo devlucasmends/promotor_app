@@ -62,8 +62,23 @@ class FirebaseServiceImp implements FirebaseService {
         'email': email,
         'uid': user.uid,
       });
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        _throwFirebaseException(5, 'Este email já está sendo utilizado');
+      }
+    }
+  }
 
-      // TODO: I stopped here, check if all the necessary parameters are declared and deal with excesses
-    } catch (e) {}
+  @override
+  Future<void> setTeam({required uidTeam}) async {
+    final instanceAuth = FirebaseAuth.instance;
+    final instanceFireStore = FirebaseFirestore.instance;
+
+    User? user = instanceAuth.currentUser;
+    CollectionReference users = instanceFireStore.collection('users');
+
+    await users.doc(user!.uid).set({
+      'team': uidTeam,
+    });
   }
 }

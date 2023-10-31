@@ -7,6 +7,14 @@
 ///
 /// 4: wrong-password - Auth
 ///
+/// 5: email-already-in-use - Auth
+///
+/// 6: invalid-email - Auth
+///
+/// 7: operation-not-allowed - Auth
+///
+/// 8: weak-password - Auth
+///
 
 class FirebaseException implements Exception {
   final int statusCode;

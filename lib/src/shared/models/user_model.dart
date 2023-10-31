@@ -3,14 +3,14 @@ class UserModel {
   final String name;
   final String phone;
   final String email;
-  final String squad;
+  final String team;
 
   UserModel({
     required this.uid,
     required this.name,
     required this.phone,
     required this.email,
-    this.squad = '',
+    this.team = '',
   });
 
   static UserModel fromJson(Map<String, dynamic> json) => UserModel(

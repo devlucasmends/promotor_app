@@ -9,7 +9,21 @@ class AuthRepository {
     _firebaseService.initialize();
   }
 
-  Future<void> signIn({required String email, required String password}) {
-    return _firebaseService.signIn(email: email, password: password);
+  Future<void> signIn({required String email, required String password}) async {
+    await _firebaseService.signIn(email: email, password: password);
+  }
+
+  Future<void> signUp({
+    required String name,
+    required String phone,
+    required String email,
+    required String password,
+  }) async {
+    await _firebaseService.signUp(
+      name: name,
+      phone: phone,
+      email: email,
+      password: password,
+    );
   }
 }

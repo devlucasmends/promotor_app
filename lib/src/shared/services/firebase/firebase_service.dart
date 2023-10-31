@@ -9,4 +9,6 @@ abstract class FirebaseService {
     required String email,
     required String password,
   });
+
+  Future<void> setTeam({required uidTeam});
 }
