@@ -12,7 +12,6 @@ abstract class AuthStoreBase with Store {
 
   Future<void> login({required String email, required String password}) async {
     await _authRepository.signIn(email: email, password: password);
-    print('Passou do login');
   }
 
   Future<void> signUp({
@@ -27,5 +26,13 @@ abstract class AuthStoreBase with Store {
       email: email,
       password: password,
     );
+  }
+
+  Future<void> signOut() async {
+    _authRepository.signOut();
+  }
+
+  Future<void> createTeams() async {
+    _authRepository.createTeams();
   }
 }

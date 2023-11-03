@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:promotor_app/src/features/auth/business/auth_store.dart';
-import 'package:promotor_app/src/features/auth/presentation/auth_sign_in_page.dart';
+import 'package:promotor_app/src/shared/presentation/teste_page.dart';
 import 'package:promotor_app/src/shared/repositories/auth/auth_repository.dart';
 import 'package:promotor_app/src/shared/services/firebase/firebase_service.dart';
 import 'package:promotor_app/src/shared/services/firebase/firebase_service_imp.dart';

@@ -26,4 +26,12 @@ class AuthRepository {
       password: password,
     );
   }
+
+  Future<void> signOut() async {
+    await _firebaseService.signOut();
+  }
+
+  Future<void> createTeams() async {
+    await _firebaseService.createTeam();
+  }
 }

@@ -59,28 +59,46 @@ class _SignInPageState extends State<SignInPage> {
               ),
               const SizedBox(height: 20),
               Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        auth.login(email: email.text, password: password.text);
-                      },
-                      child: const Text('Entrar'),
-                    ),
-                    const SizedBox(width: 25),
-                    ElevatedButton(
-                      onPressed: () {
-                        auth.signUp(
-                          name: name.text,
-                          phone: phone.text,
-                          email: email.text,
-                          password: password.text,
-                        );
-                      },
-                      child: const Text('Cadastrar'),
-                    ),
-                  ],
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          auth.login(
+                              email: email.text, password: password.text);
+                        },
+                        child: const Text('Entrar'),
+                      ),
+                      const SizedBox(width: 25),
+                      ElevatedButton(
+                        onPressed: () {
+                          auth.signUp(
+                            name: name.text,
+                            phone: phone.text,
+                            email: email.text,
+                            password: password.text,
+                          );
+                        },
+                        child: const Text('Cadastrar'),
+                      ),
+                      const SizedBox(width: 25),
+                      ElevatedButton(
+                        onPressed: () {
+                          auth.createTeams();
+                        },
+                        child: const Text('Criar time'),
+                      ),
+                      const SizedBox(width: 25),
+                      ElevatedButton(
+                        onPressed: () {
+                          auth.signOut();
+                        },
+                        child: const Text('Sair'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 40),
