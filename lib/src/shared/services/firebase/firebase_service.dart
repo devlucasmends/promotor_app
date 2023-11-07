@@ -20,5 +20,5 @@ abstract class FirebaseService {
 
   Future<void> addProduct({required ProductModel productModel});
 
-  // Future<List<ProductModel>> getListProducts();
+  Future<List<ProductModel>> getListProducts();
 }

@@ -5,8 +5,7 @@ import 'package:promotor_app/src/shared/models/team_model.dart';
 import 'package:promotor_app/src/shared/models/product_model.dart';
 import 'package:promotor_app/src/shared/models/user_model.dart';
 import 'package:promotor_app/src/shared/services/firebase/firebase_service.dart';
-import 'package:promotor_app/src/shared/exceptions/firebase_exception.dart'
-    as fe;
+import 'package:promotor_app/src/shared/exceptions/firebase_exception.dart' as fe;
 
 class FirebaseServiceImp implements FirebaseService {
   FirebaseServiceImp() {
@@ -27,8 +26,7 @@ class FirebaseServiceImp implements FirebaseService {
     try {
       final instance = FirebaseAuth.instance;
 
-      await instance.signInWithEmailAndPassword(
-          email: email, password: password);
+      await instance.signInWithEmailAndPassword(email: email, password: password);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-email') {
         _throwFirebaseException(1, 'Email invalido');
@@ -53,8 +51,7 @@ class FirebaseServiceImp implements FirebaseService {
       final instanceAuth = FirebaseAuth.instance;
       final instanceFireStore = FirebaseFirestore.instance;
 
-      await instanceAuth.createUserWithEmailAndPassword(
-          email: email, password: password);
+      await instanceAuth.createUserWithEmailAndPassword(email: email, password: password);
 
       User? user = instanceAuth.currentUser;
       CollectionReference users = instanceFireStore.collection('users');
@@ -137,20 +134,20 @@ class FirebaseServiceImp implements FirebaseService {
     await teams.doc(idTeamCurrent).update(teamCurrent.toJson());
   }
 
-  // @override
-  // Future<List<ProductModel>> getListProducts() async {
-  //   final instanceFireStore = FirebaseFirestore.instance;
+  @override
+  Future<List<ProductModel>> getListProducts() async {
+    final instanceFireStore = FirebaseFirestore.instance;
 
-  //   final users = instanceFireStore.collection('users');
-  //   final teams = instanceFireStore.collection('teams');
+    final users = instanceFireStore.collection('users');
+    final teams = instanceFireStore.collection('teams');
 
-  //   final docUser = users.doc(FirebaseAuth.instance.currentUser!.uid);
-  //   final snapshotUser = await docUser.get();
+    final docUser = users.doc(FirebaseAuth.instance.currentUser!.uid);
+    final snapshotUser = await docUser.get();
 
-  //   final docTeam = teams.doc(snapshotUser.get('team'));
-  //   final snapshotTeam = await docTeam.get();
-  //   final teamCurrent = TeamModel.fromJson(snapshotTeam.data()!);
+    final docTeam = teams.doc(snapshotUser.get('team'));
+    final snapshotTeam = await docTeam.get();
+    final teamCurrent = TeamModel.fromJson(snapshotTeam.data()!);
 
-  //   return teamCurrent.listProducts;
-  // }
+    return teamCurrent.listProducts;
+  }
 }
