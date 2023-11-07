@@ -3,10 +3,12 @@ import 'package:promotor_app/src/shared/services/firebase/firebase_service.dart'
 class AuthRepository {
   final FirebaseService _firebaseService;
 
-  AuthRepository(this._firebaseService);
+  AuthRepository(this._firebaseService) {
+    initialize();
+  }
 
   Future<void> initialize() async {
-    _firebaseService.initialize();
+    await _firebaseService.initialize();
   }
 
   Future<void> signIn({required String email, required String password}) async {
@@ -29,9 +31,5 @@ class AuthRepository {
 
   Future<void> signOut() async {
     await _firebaseService.signOut();
-  }
-
-  Future<void> createTeams() async {
-    await _firebaseService.createTeam();
   }
 }

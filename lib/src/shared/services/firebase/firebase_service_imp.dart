@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:promotor_app/src/features/team/models/team_model.dart';
+import 'package:promotor_app/src/shared/models/team_model.dart';
+import 'package:promotor_app/src/shared/models/product_model.dart';
 import 'package:promotor_app/src/shared/models/user_model.dart';
 import 'package:promotor_app/src/shared/services/firebase/firebase_service.dart';
 import 'package:promotor_app/src/shared/exceptions/firebase_exception.dart'
@@ -74,7 +75,7 @@ class FirebaseServiceImp implements FirebaseService {
   @override
   Future<void> signOut() async {
     final instanceAuth = FirebaseAuth.instance;
-    instanceAuth.signOut();
+    await instanceAuth.signOut();
   }
 
   @override
@@ -115,4 +116,41 @@ class FirebaseServiceImp implements FirebaseService {
       'team': idTeam,
     });
   }
+
+  @override
+  Future<void> addProduct({required ProductModel productModel}) async {
+    final instanceFireStore = FirebaseFirestore.instance;
+
+    final users = instanceFireStore.collection('users');
+    final teams = instanceFireStore.collection('teams');
+
+    final docUser = users.doc(FirebaseAuth.instance.currentUser!.uid);
+    final snapshotUser = await docUser.get();
+    final String idTeamCurrent = snapshotUser.get('team');
+
+    final docTeam = teams.doc(idTeamCurrent);
+    final snapshotTeam = await docTeam.get();
+    final teamCurrent = TeamModel.fromJson(snapshotTeam.data()!);
+
+    teamCurrent.listProducts.add(productModel);
+
+    await teams.doc(idTeamCurrent).update(teamCurrent.toJson());
+  }
+
+  // @override
+  // Future<List<ProductModel>> getListProducts() async {
+  //   final instanceFireStore = FirebaseFirestore.instance;
+
+  //   final users = instanceFireStore.collection('users');
+  //   final teams = instanceFireStore.collection('teams');
+
+  //   final docUser = users.doc(FirebaseAuth.instance.currentUser!.uid);
+  //   final snapshotUser = await docUser.get();
+
+  //   final docTeam = teams.doc(snapshotUser.get('team'));
+  //   final snapshotTeam = await docTeam.get();
+  //   final teamCurrent = TeamModel.fromJson(snapshotTeam.data()!);
+
+  //   return teamCurrent.listProducts;
+  // }
 }

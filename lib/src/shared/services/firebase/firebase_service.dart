@@ -1,3 +1,5 @@
+import 'package:promotor_app/src/shared/models/product_model.dart';
+
 abstract class FirebaseService {
   Future<void> initialize();
 
@@ -15,4 +17,8 @@ abstract class FirebaseService {
   Future<void> createTeam();
 
   Future<void> setTeam({required uidTeam});
+
+  Future<void> addProduct({required ProductModel productModel});
+
+  // Future<List<ProductModel>> getListProducts();
 }
