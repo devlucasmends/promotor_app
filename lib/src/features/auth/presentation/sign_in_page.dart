@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:promotor_app/src/shared/business/auth/auth_state.dart';
 import 'package:promotor_app/src/shared/business/auth/auth_store.dart';
 import 'package:promotor_app/src/shared/repositories/auth/auth_repository.dart';
 import 'package:provider/provider.dart';
@@ -47,13 +49,16 @@ class _SignInPageState extends State<SignInPage> {
               ElevatedButton(
                 onPressed: () {
                   auth.signIn(email: email.text, password: password.text);
+                  if (auth.state is AuthLoadedState) {
+                    context.go('/home');
+                  }
                 },
                 child: const Text('Entrar'),
               ),
               const SizedBox(width: 25),
               ElevatedButton(
                 onPressed: () {
-                  auth.signIn(email: email.text, password: password.text);
+                  context.go('/sign_up');
                 },
                 child: const Text('Cadastrar'),
               ),

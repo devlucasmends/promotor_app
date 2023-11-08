@@ -32,10 +32,10 @@ dependencies:
     sdk: flutter
   mobx: ^2.2.0
   flutter_mobx: ^2.0.6+5
-  firebase_core: ^2.15.0
-  firebase_auth: ^4.10.1
-  firebase_storage: ^11.2.5
-  cloud_firestore: ^4.8.3
+  firebase_core: ^2.21.0
+  firebase_auth: ^4.12.1
+  firebase_storage: ^11.4.1
+  cloud_firestore: ^4.12.2
   flutter_svg: ^2.0.7
   equatable: ^2.0.5
   hive: ^2.2.3

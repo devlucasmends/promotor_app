@@ -29,13 +29,13 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: BackButton(
-          onPressed: () {
-            print('object');
-          },
-        ),
-      ),
+      // appBar: AppBar(
+      //   leading: BackButton(
+      //     onPressed: () {
+      //       print('object');
+      //     },
+      //   ),
+      // ),
       body: Padding(
         padding: const EdgeInsets.all(15),
         child: Column(
