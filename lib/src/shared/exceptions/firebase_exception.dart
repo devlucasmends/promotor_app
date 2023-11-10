@@ -15,6 +15,7 @@
 ///
 /// 8: weak-password - Auth
 ///
+/// 9: INVALID_LOGIN_CREDENTIALS - Auth
 
 class FirebaseException implements Exception {
   final int statusCode;

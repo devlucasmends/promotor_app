@@ -5,7 +5,8 @@ import 'package:promotor_app/src/shared/models/team_model.dart';
 import 'package:promotor_app/src/shared/models/product_model.dart';
 import 'package:promotor_app/src/shared/models/user_model.dart';
 import 'package:promotor_app/src/shared/services/firebase/firebase_service.dart';
-import 'package:promotor_app/src/shared/exceptions/firebase_exception.dart' as fe;
+import 'package:promotor_app/src/shared/exceptions/firebase_exception.dart'
+    as fe;
 
 class FirebaseServiceImp implements FirebaseService {
   FirebaseServiceImp() {
@@ -26,7 +27,8 @@ class FirebaseServiceImp implements FirebaseService {
     try {
       final instance = FirebaseAuth.instance;
 
-      await instance.signInWithEmailAndPassword(email: email, password: password);
+      await instance.signInWithEmailAndPassword(
+          email: email, password: password);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-email') {
         _throwFirebaseException(1, 'Email invalido');
@@ -36,6 +38,8 @@ class FirebaseServiceImp implements FirebaseService {
         _throwFirebaseException(3, 'Usuário não cadastrado');
       } else if (e.code == 'wrong-password') {
         _throwFirebaseException(4, 'Senha Incorreta');
+      } else if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
+        _throwFirebaseException(9, 'Dados invalidos');
       }
     }
   }
@@ -51,7 +55,8 @@ class FirebaseServiceImp implements FirebaseService {
       final instanceAuth = FirebaseAuth.instance;
       final instanceFireStore = FirebaseFirestore.instance;
 
-      await instanceAuth.createUserWithEmailAndPassword(email: email, password: password);
+      await instanceAuth.createUserWithEmailAndPassword(
+          email: email, password: password);
 
       User? user = instanceAuth.currentUser;
       CollectionReference users = instanceFireStore.collection('users');
