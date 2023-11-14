@@ -7,6 +7,6 @@ class HomeRepository {
   HomeRepository(this._firebaseService);
 
   Future<List<ProductModel>> getListProducts() async {
-    return _firebaseService.getListProducts();
+    return await _firebaseService.getListProducts();
   }
 }

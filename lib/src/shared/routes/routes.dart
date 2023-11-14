@@ -10,10 +10,12 @@ final routes = GoRouter(
     GoRoute(
       path: '/',
       builder: (context, state) => const SignInPage(),
-    ),
-    GoRoute(
-      path: '/sign_up',
-      builder: (context, state) => const SignUpPage(),
+      routes: [
+        GoRoute(
+          path: 'sign_up',
+          builder: (context, state) => const SignUpPage(),
+        ),
+      ],
     ),
     GoRoute(
       path: '/team',

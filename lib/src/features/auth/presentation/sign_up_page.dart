@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:promotor_app/src/shared/business/auth/auth_state.dart';
 import 'package:promotor_app/src/shared/business/auth/auth_store.dart';
 import 'package:provider/provider.dart';
 
@@ -29,13 +31,13 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   leading: BackButton(
-      //     onPressed: () {
-      //       print('object');
-      //     },
-      //   ),
-      // ),
+      appBar: AppBar(
+        leading: BackButton(
+          onPressed: () {
+            context.pop();
+          },
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(15),
         child: Column(
@@ -66,13 +68,16 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                auth.signUp(
+              onPressed: () async {
+                await auth.signUp(
                   name: name.text,
                   phone: phone.text,
                   email: email.text,
                   password: password.text,
                 );
+                if (auth.state is AuthSucessState) {
+                  if (context.mounted) context.go('/team');
+                }
               },
               child: const Text('Cadastrar'),
             ),

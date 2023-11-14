@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:promotor_app/src/features/products/business/product_store.dart';
+import 'package:promotor_app/src/features/products/repositories/product_repository.dart';
+import 'package:promotor_app/src/shared/models/product_model.dart';
+import 'package:provider/provider.dart';
 
 class AddProductPage extends StatefulWidget {
   const AddProductPage({super.key});
@@ -11,6 +16,16 @@ class _AddProductPageState extends State<AddProductPage> {
   TextEditingController description = TextEditingController();
   TextEditingController barCode = TextEditingController();
   TextEditingController validate = TextEditingController();
+  late ProductStore productStore;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final productRepository =
+        Provider.of<ProductRepository>(context, listen: false);
+    productStore = ProductStore(productRepository);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +74,16 @@ class _AddProductPageState extends State<AddProductPage> {
               ),
               const SizedBox(height: 50),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  productStore.addProduct(
+                    ProductModel(
+                      description: description.text,
+                      barCode: barCode.text,
+                      validate: validate.text,
+                    ),
+                  );
+                  context.go('/home');
+                },
                 child: const Text('Salvar'),
               ),
             ],

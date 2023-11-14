@@ -1,25 +1,25 @@
 import 'package:equatable/equatable.dart';
 
-abstract class AuthState extends Equatable {}
+abstract class TeamState extends Equatable {}
 
-class AuthInitState extends AuthState {
+class TeamInitState extends TeamState {
   @override
   List<Object?> get props => [];
 }
 
-class AuthSucessState extends AuthState {
+class TeamSucessState extends TeamState {
   @override
   List<Object?> get props => [];
 }
 
-class AuthLoadingState extends AuthState {
+class TeamLoadingState extends TeamState {
   @override
   List<Object?> get props => [];
 }
 
-class AuthFailureState extends AuthState {
+class TeamFailureState extends TeamState {
   final String errorMessage;
-  AuthFailureState({this.errorMessage = ''});
+  TeamFailureState({this.errorMessage = ''});
 
   @override
   List<Object?> get props => [];

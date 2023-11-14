@@ -38,8 +38,6 @@ class FirebaseServiceImp implements FirebaseService {
         _throwFirebaseException(3, 'Usuário não cadastrado');
       } else if (e.code == 'wrong-password') {
         _throwFirebaseException(4, 'Senha Incorreta');
-      } else if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
-        _throwFirebaseException(9, 'Dados invalidos');
       }
     }
   }
@@ -66,6 +64,7 @@ class FirebaseServiceImp implements FirebaseService {
         'phone': phone,
         'email': email,
         'uid': user.uid,
+        'team': '',
       });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {

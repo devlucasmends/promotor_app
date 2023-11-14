@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:promotor_app/src/features/home/presentation/home_page.dart';
 import 'package:promotor_app/src/shared/business/auth/auth_state.dart';
 import 'package:promotor_app/src/shared/business/auth/auth_store.dart';
 import 'package:promotor_app/src/shared/repositories/auth/auth_repository.dart';
@@ -50,7 +49,7 @@ class _SignInPageState extends State<SignInPage> {
               ElevatedButton(
                 onPressed: () async {
                   await auth.signIn(email: email.text, password: password.text);
-                  if (auth.state is AuthLoadedState) {
+                  if (auth.state is AuthSucessState) {
                     if (context.mounted) context.go('/home');
                   }
                 },
@@ -59,7 +58,7 @@ class _SignInPageState extends State<SignInPage> {
               const SizedBox(width: 25),
               ElevatedButton(
                 onPressed: () {
-                  auth.signOut();
+                  context.go('/sign_up');
                 },
                 child: const Text('Cadastrar'),
               ),

@@ -1,25 +1,25 @@
 import 'package:equatable/equatable.dart';
 
-abstract class AuthState extends Equatable {}
+abstract class HomeState extends Equatable {}
 
-class AuthInitState extends AuthState {
+class HomeInitState extends HomeState {
   @override
   List<Object?> get props => [];
 }
 
-class AuthSucessState extends AuthState {
+class HomeSucessState extends HomeState {
   @override
   List<Object?> get props => [];
 }
 
-class AuthLoadingState extends AuthState {
+class HomeLoadingState extends HomeState {
   @override
   List<Object?> get props => [];
 }
 
-class AuthFailureState extends AuthState {
+class HomeFailureState extends HomeState {
   final String errorMessage;
-  AuthFailureState({this.errorMessage = ''});
+  HomeFailureState({this.errorMessage = ''});
 
   @override
   List<Object?> get props => [];
