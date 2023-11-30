@@ -60,7 +60,7 @@ mixin _$HomeStore on HomeStoreBase, Store {
       ActionController(name: 'HomeStoreBase', context: context);
 
   @override
-  dynamic convertDate(String validate) {
+  String convertDate(String validate) {
     final _$actionInfo = _$HomeStoreBaseActionController.startAction(
         name: 'HomeStoreBase.convertDate');
     try {

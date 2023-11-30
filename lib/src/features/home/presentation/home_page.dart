@@ -39,7 +39,11 @@ class _HomePageState extends State<HomePage> {
               return ListTile(
                 leading: Text('LEADING'),
                 title: Text(listProducts[index].description),
-                subtitle: Text('SUBTITLE'),
+                subtitle: Text(
+                  home.convertDate(
+                    listProducts[index].validate,
+                  ),
+                ),
                 trailing: Container(
                   height: 50,
                   width: 50,
@@ -73,7 +77,9 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.white,
         onPressed: () {
-          context.go('/home/add_product');
+          context.push('/home/add_product').whenComplete(
+                () => home.getListProducts(),
+              );
         },
         child: const Icon(
           Icons.add,

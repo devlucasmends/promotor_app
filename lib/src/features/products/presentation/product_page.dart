@@ -126,7 +126,7 @@ class _ProductPageState extends State<ProductPage> {
                       ProductModel(
                         description: description.text,
                         barCode: barCode.text,
-                        validate: validate.text,
+                        validate: maskDate.getMaskedText(),
                       ),
                     );
                   } else {

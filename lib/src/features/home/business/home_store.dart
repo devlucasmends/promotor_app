@@ -32,14 +32,24 @@ abstract class HomeStoreBase with Store {
   }
 
   @action
-  convertDate(String validate) {
-    final validateTra = validate.replaceAll(RegExp(r'[^0-9]'), '');
-    final ta = validate.split('/');
+  String convertDate(String validate) {
+    final day = int.parse(validate.substring(0, 2));
+    final month = int.parse(validate.substring(3, 5));
+    final year = int.parse(validate.substring(6));
+    final currentDate = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day,
+    );
+    DateTime validateProduct = DateTime(year, month, day);
 
-    final currentDate = DateTime.now();
-    // DateTime validateProduct = DateTime.parse(validate);
+    final differenceDays = validateProduct.difference(currentDate).inDays;
 
-    // final x = validateProduct.difference(currentDate);
-    print('as');
+    if (differenceDays < 0) {
+      return 'Vencido a ${differenceDays * (-1)} Dias';
+    } else if (differenceDays == 0) {
+      return 'Vence Hoje';
+    }
+    return 'Vence em $differenceDays Dias';
   }
 }
