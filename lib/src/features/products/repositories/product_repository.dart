@@ -7,6 +7,13 @@ class ProductRepository {
   ProductRepository(this._firebaseService);
 
   Future<void> addProduct({required ProductModel productModel}) async {
-    _firebaseService.addProduct(productModel: productModel);
+    await _firebaseService.addProduct(productModel: productModel);
+  }
+
+  Future<void> editProduct({
+    required ProductModel product,
+    required int index,
+  }) async {
+    await _firebaseService.editProduct(product: product, index: index);
   }
 }

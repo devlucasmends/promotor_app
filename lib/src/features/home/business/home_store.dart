@@ -30,4 +30,16 @@ abstract class HomeStoreBase with Store {
     listProducts = await _homeRepository.getListProducts();
     state = HomeSucessState();
   }
+
+  @action
+  convertDate(String validate) {
+    final validateTra = validate.replaceAll(RegExp(r'[^0-9]'), '');
+    final ta = validate.split('/');
+
+    final currentDate = DateTime.now();
+    // DateTime validateProduct = DateTime.parse(validate);
+
+    // final x = validateProduct.difference(currentDate);
+    print('as');
+  }
 }

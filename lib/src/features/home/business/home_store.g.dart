@@ -56,6 +56,20 @@ mixin _$HomeStore on HomeStoreBase, Store {
     return _$getListProductsAsyncAction.run(() => super.getListProducts());
   }
 
+  late final _$HomeStoreBaseActionController =
+      ActionController(name: 'HomeStoreBase', context: context);
+
+  @override
+  dynamic convertDate(String validate) {
+    final _$actionInfo = _$HomeStoreBaseActionController.startAction(
+        name: 'HomeStoreBase.convertDate');
+    try {
+      return super.convertDate(validate);
+    } finally {
+      _$HomeStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     return '''

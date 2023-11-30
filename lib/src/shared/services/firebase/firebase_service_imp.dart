@@ -154,4 +154,27 @@ class FirebaseServiceImp implements FirebaseService {
 
     return teamCurrent.listProducts;
   }
+
+  @override
+  Future<void> editProduct({
+    required ProductModel product,
+    required int index,
+  }) async {
+    final instanceFireStore = FirebaseFirestore.instance;
+
+    final users = instanceFireStore.collection('users');
+    final teams = instanceFireStore.collection('teams');
+
+    final docUser = users.doc(FirebaseAuth.instance.currentUser!.uid);
+    final snapshotUser = await docUser.get();
+    final String idTeamCurrent = snapshotUser.get('team');
+
+    final docTeam = teams.doc(idTeamCurrent);
+    final snapshotTeam = await docTeam.get();
+    final teamCurrent = TeamModel.fromJson(snapshotTeam.data()!);
+
+    teamCurrent.listProducts[index] = product;
+
+    docTeam.update(teamCurrent.toJson());
+  }
 }

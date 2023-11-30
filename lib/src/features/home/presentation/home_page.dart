@@ -20,9 +20,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    super.initState();
     final homeRepository = Provider.of<HomeRepository>(context, listen: false);
     home = HomeStore(homeRepository);
+    home.getListProducts();
+    super.initState();
   }
 
   @override
@@ -35,7 +36,34 @@ class _HomePageState extends State<HomePage> {
           return ListView.builder(
             itemCount: listProducts.length,
             itemBuilder: (context, index) {
-              return ListTile(title: Text(listProducts[index].description));
+              return ListTile(
+                leading: Text('LEADING'),
+                title: Text(listProducts[index].description),
+                subtitle: Text('SUBTITLE'),
+                trailing: Container(
+                  height: 50,
+                  width: 50,
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      Map<String, dynamic> dataProduct = {
+                        'listProduct': listProducts,
+                        'index': index,
+                      };
+
+                      GoRouter.of(context)
+                          .push('/home/edit_product', extra: dataProduct)
+                          .whenComplete(
+                            () => home.getListProducts(),
+                          );
+                    },
+                    icon: const Icon(Icons.edit),
+                  ),
+                ),
+              );
             },
           );
         } else {
@@ -45,7 +73,7 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.white,
         onPressed: () {
-          context.go('/add_product');
+          context.go('/home/add_product');
         },
         child: const Icon(
           Icons.add,

@@ -14,7 +14,7 @@ class ProductModel {
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
       description: json['description'].toString(),
-      barCode: json['description'].toString(),
+      barCode: json['barCode'].toString(),
       validate: json['validate'].toString(),
     );
   }

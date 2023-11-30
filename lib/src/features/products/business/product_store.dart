@@ -19,4 +19,13 @@ abstract class ProductStoreBase with Store {
     await _productRepository.addProduct(productModel: productModel);
     state = ProductSucessState();
   }
+
+  Future<void> editProduct({
+    required ProductModel product,
+    required int index,
+  }) async {
+    state = ProductLoadingState();
+    await _productRepository.editProduct(product: product, index: index);
+    state = ProductSucessState();
+  }
 }
