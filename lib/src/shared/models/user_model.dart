@@ -1,5 +1,5 @@
 class UserModel {
-  final String uid;
+  late String uid;
   final String name;
   final String phone;
   final String email;

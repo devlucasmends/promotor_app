@@ -2,6 +2,7 @@ import 'package:mobx/mobx.dart';
 import 'package:promotor_app/src/shared/business/auth/auth_state.dart';
 import 'package:promotor_app/src/shared/exceptions/firebase_exception.dart'
     as fe;
+import 'package:promotor_app/src/shared/models/user_model.dart';
 import 'package:promotor_app/src/shared/repositories/auth/auth_repository.dart';
 part 'auth_store.g.dart';
 
@@ -13,12 +14,20 @@ abstract class AuthStoreBase with Store {
   @observable
   AuthState state = AuthInitState();
 
+  @observable
+  UserModel? _userModel;
+  UserModel? get userModel => _userModel;
+
   AuthStoreBase(this._authRepository) {
+    _userModel = null;
     _initialize();
   }
 
+  @action
   Future<void> _initialize() async {
+    state = AuthLoadingState();
     await _authRepository.initialize();
+    state = AuthInitState();
   }
 
   @action
@@ -34,9 +43,10 @@ abstract class AuthStoreBase with Store {
 
       if (error is fe.FirebaseException) errorMessage = error.message;
       state = AuthFailureState(errorMessage: errorMessage);
-    }).then((value) {
+    }).then((value) async {
       if (state is! AuthFailureState) {
         state = AuthSucessState();
+        _userModel = await _authRepository.userIsLogged();
       }
     });
   }
@@ -57,11 +67,33 @@ abstract class AuthStoreBase with Store {
     }).then((value) async {
       if (state is! AuthFailureState) {
         state = AuthSucessState();
+        _userModel = await _authRepository.userIsLogged();
       }
     });
   }
 
   Future<void> signOut() async {
-    await _authRepository.signOut();
+    state = AuthLoadingState();
+
+    _authRepository.signOut()
+      ..then((val) async {
+        if (state is! AuthFailureState) {
+          _userModel = null;
+        }
+      })
+      ..catchError((error, stackTrace) {
+        String errorMessage = 'Erro inesperado. Tente novamente mais tarde.';
+        if (error is fe.FirebaseException) errorMessage = error.message;
+        state = AuthFailureState(errorMessage: errorMessage);
+      });
+  }
+
+  Future<bool> userIsLogged() async {
+    _userModel = await _authRepository.userIsLogged();
+    if (_userModel != null) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

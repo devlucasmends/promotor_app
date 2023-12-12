@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:promotor_app/src/features/home/business/home_state.dart';
 import 'package:promotor_app/src/features/home/business/home_store.dart';
 import 'package:promotor_app/src/features/home/repositories/home_repository.dart';
+import 'package:promotor_app/src/shared/business/auth/auth_store.dart';
 import 'package:promotor_app/src/shared/models/product_model.dart';
+import 'package:promotor_app/src/shared/repositories/auth/auth_repository.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,12 +18,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late HomeStore home;
+  late AuthStore authStore;
   List<ProductModel> listProducts = [];
 
   @override
   void initState() {
     final homeRepository = Provider.of<HomeRepository>(context, listen: false);
     home = HomeStore(homeRepository);
+
+    final authRepository = Provider.of<AuthRepository>(context, listen: false);
+    authStore = AuthStore(authRepository);
+
     home.getListProducts();
     super.initState();
   }
@@ -30,6 +37,17 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.amber,
+      appBar: AppBar(
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              authStore.signOut();
+              context.go('/');
+            },
+            child: const Text('Sair'),
+          ),
+        ],
+      ),
       body: Center(child: Observer(builder: (_) {
         if (home.state is HomeSucessState) {
           listProducts = home.listProducts;

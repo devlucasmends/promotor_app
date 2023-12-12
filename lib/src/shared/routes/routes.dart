@@ -4,6 +4,7 @@ import 'package:promotor_app/src/features/auth/presentation/sign_in_page.dart';
 import 'package:promotor_app/src/features/auth/presentation/sign_up_page.dart';
 import 'package:promotor_app/src/features/home/presentation/home_page.dart';
 import 'package:promotor_app/src/features/products/presentation/product_page.dart';
+import 'package:promotor_app/src/features/splash/presentation/splash_page.dart';
 import 'package:promotor_app/src/features/team/presentation/team_page.dart';
 import 'package:promotor_app/src/shared/models/product_model.dart';
 
@@ -11,6 +12,10 @@ final routes = GoRouter(
   routes: [
     GoRoute(
       path: '/',
+      builder: (context, state) => const SplashPage(),
+    ),
+    GoRoute(
+      path: '/sign_in',
       builder: (context, state) => const SignInPage(),
       routes: [
         GoRoute(

@@ -1,3 +1,4 @@
+import 'package:promotor_app/src/shared/models/user_model.dart';
 import 'package:promotor_app/src/shared/services/firebase/firebase_service.dart';
 
 class AuthRepository {
@@ -31,5 +32,9 @@ class AuthRepository {
 
   Future<void> signOut() async {
     await _firebaseService.signOut();
+  }
+
+  Future<UserModel?> userIsLogged() async {
+    return await _firebaseService.userIsLogged();
   }
 }

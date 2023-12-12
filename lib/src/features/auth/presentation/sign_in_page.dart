@@ -23,6 +23,10 @@ class _SignInPageState extends State<SignInPage> {
 
     final authRepository = Provider.of<AuthRepository>(context, listen: false);
     auth = AuthStore(authRepository);
+
+    if (auth.state is AuthLoggedState) {
+      context.go('/home');
+    }
   }
 
   @override
@@ -49,6 +53,7 @@ class _SignInPageState extends State<SignInPage> {
               ElevatedButton(
                 onPressed: () async {
                   await auth.signIn(email: email.text, password: password.text);
+
                   if (auth.state is AuthSucessState) {
                     if (context.mounted) context.go('/home');
                   }

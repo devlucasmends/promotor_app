@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:promotor_app/src/shared/models/team_model.dart';
 import 'package:promotor_app/src/shared/models/product_model.dart';
 import 'package:promotor_app/src/shared/models/user_model.dart';
@@ -176,5 +179,50 @@ class FirebaseServiceImp implements FirebaseService {
     teamCurrent.listProducts[index] = product;
 
     docTeam.update(teamCurrent.toJson());
+  }
+
+  @override
+  Future<void> addImageStorage(String path, String identifier) async {
+    final instanceFireStore = FirebaseFirestore.instance;
+    final storage = FirebaseStorage.instance;
+    String reference;
+
+    final users = instanceFireStore.collection('users');
+    final docUser = users.doc(FirebaseAuth.instance.currentUser!.uid);
+    final snapshotUser = await docUser.get();
+
+    File file = File(path);
+
+    try {
+      reference = '/${snapshotUser.get('team')}/img-$identifier.jpg';
+
+      await storage.ref(reference).putFile(file);
+    } catch (e) {}
+  }
+
+  @override
+  Future<UserModel?> userIsLogged() async {
+    try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      UserModel? userModel;
+
+      if (currentUser != null) {
+        final docUser =
+            FirebaseFirestore.instance.collection('users').doc(currentUser.uid);
+        final snapshot = await docUser.get();
+
+        userModel = UserModel.fromJson(snapshot.data()!);
+      }
+      return userModel;
+    } on FirebaseException {
+      return null;
+    }
+    // if (FirebaseAuth.instance.currentUser != null) {
+    //   print(
+    //       '----------------------------${FirebaseAuth.instance.currentUser?.uid} -----------------');
+    // } else {
+    //   print(
+    //       'objectobjectobjectobjectobjectobjectobjectobjectobjectobjectobject\n\n\n\n\n\n');
+    // }
   }
 }

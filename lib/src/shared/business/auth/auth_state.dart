@@ -12,6 +12,11 @@ class AuthSucessState extends AuthState {
   List<Object?> get props => [];
 }
 
+class AuthLoggedState extends AuthState {
+  @override
+  List<Object?> get props => [];
+}
+
 class AuthLoadingState extends AuthState {
   @override
   List<Object?> get props => [];

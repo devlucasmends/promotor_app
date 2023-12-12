@@ -24,6 +24,30 @@ mixin _$AuthStore on AuthStoreBase, Store {
     });
   }
 
+  late final _$_userModelAtom =
+      Atom(name: 'AuthStoreBase._userModel', context: context);
+
+  @override
+  UserModel? get _userModel {
+    _$_userModelAtom.reportRead();
+    return super._userModel;
+  }
+
+  @override
+  set _userModel(UserModel? value) {
+    _$_userModelAtom.reportWrite(value, super._userModel, () {
+      super._userModel = value;
+    });
+  }
+
+  late final _$_initializeAsyncAction =
+      AsyncAction('AuthStoreBase._initialize', context: context);
+
+  @override
+  Future<void> _initialize() {
+    return _$_initializeAsyncAction.run(() => super._initialize());
+  }
+
   late final _$signInAsyncAction =
       AsyncAction('AuthStoreBase.signIn', context: context);
 

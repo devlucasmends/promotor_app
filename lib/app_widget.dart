@@ -3,6 +3,8 @@ import 'package:promotor_app/src/features/home/business/home_store.dart';
 import 'package:promotor_app/src/features/home/repositories/home_repository.dart';
 import 'package:promotor_app/src/features/products/business/product_store.dart';
 import 'package:promotor_app/src/features/products/repositories/product_repository.dart';
+import 'package:promotor_app/src/features/products/services/product_service.dart';
+import 'package:promotor_app/src/features/products/services/product_service_imp.dart';
 import 'package:promotor_app/src/features/team/business/team_store.dart';
 import 'package:promotor_app/src/features/team/repositories/team_repository.dart';
 import 'package:promotor_app/src/shared/routes/routes.dart';
@@ -38,6 +40,9 @@ class AppWidget extends StatelessWidget {
         Provider<FirebaseService>(
           create: (context) => FirebaseServiceImp(),
         ),
+        Provider<ProductService>(
+          create: (context) => ProductServiceImp(),
+        ),
         Provider<AuthRepository>(create: (context) {
           final firebaseService = context.read<FirebaseService>();
           return AuthRepository(firebaseService);
@@ -52,7 +57,8 @@ class AppWidget extends StatelessWidget {
         }),
         Provider<ProductRepository>(create: (context) {
           final firebaseService = context.read<FirebaseService>();
-          return ProductRepository(firebaseService);
+          final productService = context.read<ProductService>();
+          return ProductRepository(firebaseService, productService);
         }),
       ],
       child: MaterialApp.router(

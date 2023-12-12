@@ -1,4 +1,5 @@
 import 'package:promotor_app/src/shared/models/product_model.dart';
+import 'package:promotor_app/src/shared/models/user_model.dart';
 
 abstract class FirebaseService {
   Future<void> initialize();
@@ -23,4 +24,8 @@ abstract class FirebaseService {
   Future<void> editProduct({required ProductModel product, required int index});
 
   Future<List<ProductModel>> getListProducts();
+
+  Future<void> addImageStorage(String path, String identifier);
+
+  Future<UserModel?> userIsLogged();
 }
