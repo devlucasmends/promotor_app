@@ -1,4 +1,5 @@
 import 'package:promotor_app/src/shared/models/product_model.dart';
+import 'package:promotor_app/src/shared/models/team_model.dart';
 import 'package:promotor_app/src/shared/models/user_model.dart';
 
 abstract class FirebaseService {
@@ -19,13 +20,18 @@ abstract class FirebaseService {
 
   Future<void> setTeam({required uidTeam});
 
+  Future<void> addUserListTeam({required uidTeam});
+
   Future<void> addProduct({required ProductModel productModel});
 
   Future<void> editProduct({required ProductModel product, required int index});
 
-  Future<List<ProductModel>> getListProducts();
+  Future<TeamModel> getTeamCurrent();
 
   Future<void> addImageStorage(String path, String identifier);
 
   Future<UserModel?> userIsLogged();
+
+  Future<void> removeUserTeam(
+      {required String uidTeam, required String uidUser, required int index});
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +8,7 @@ import 'package:promotor_app/src/features/home/business/home_store.dart';
 import 'package:promotor_app/src/features/home/repositories/home_repository.dart';
 import 'package:promotor_app/src/shared/business/auth/auth_store.dart';
 import 'package:promotor_app/src/shared/models/product_model.dart';
+import 'package:promotor_app/src/shared/models/user_model.dart';
 import 'package:promotor_app/src/shared/repositories/auth/auth_repository.dart';
 import 'package:provider/provider.dart';
 
@@ -19,13 +22,17 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late HomeStore home;
   late AuthStore authStore;
+  UserModel? userModel;
   List<ProductModel> listProducts = [];
+  TextStyle styleText = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w500,
+  );
 
   @override
   void initState() {
     final homeRepository = Provider.of<HomeRepository>(context, listen: false);
     home = HomeStore(homeRepository);
-
     final authRepository = Provider.of<AuthRepository>(context, listen: false);
     authStore = AuthStore(authRepository);
 
@@ -37,12 +44,44 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.amber,
+      drawer: Drawer(
+        width: 250,
+        child: ListView(
+          children: [
+            componentListTile(
+              text: 'Adicionar Produto',
+              path: '/home/add_product',
+              icon: Icons.add_box_rounded,
+            ),
+            componentListTile(
+              text: 'Time',
+              path: '/home/team_management',
+              icon: Icons.group,
+            ),
+            componentListTile(
+              text: 'Sobre',
+              path: '/about',
+              icon: Icons.info_outline_rounded,
+            ),
+            componentListTile(
+              text: 'Configurações',
+              path: '/config',
+              icon: Icons.settings,
+            ),
+            componentListTile(
+              text: 'Sair',
+              path: '/logout',
+              icon: Icons.logout,
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
         actions: [
           ElevatedButton(
             onPressed: () {
               authStore.signOut();
-              context.go('/');
+              context.go('/sign_in');
             },
             child: const Text('Sair'),
           ),
@@ -55,7 +94,7 @@ class _HomePageState extends State<HomePage> {
             itemCount: listProducts.length,
             itemBuilder: (context, index) {
               return ListTile(
-                leading: Text('LEADING'),
+                leading: const Text('LEADING'),
                 title: Text(listProducts[index].description),
                 subtitle: Text(
                   home.convertDate(
@@ -103,6 +142,32 @@ class _HomePageState extends State<HomePage> {
           Icons.add,
           color: Colors.black,
         ),
+      ),
+    );
+  }
+
+  Widget componentListTile(
+      {required String text, required String path, required IconData icon}) {
+    return SizedBox(
+      height: 50,
+      child: ListTile(
+        minLeadingWidth: 5,
+        leading: Icon(icon),
+        title: Text(
+          text,
+          style: styleText,
+        ),
+        onTap: () {
+          print(path);
+          if (path == '/logout') {
+            authStore.signOut();
+            context.go('/sign_in');
+          } else {
+            context.push(path).whenComplete(
+                  () => home.getListProducts(),
+                );
+          }
+        },
       ),
     );
   }

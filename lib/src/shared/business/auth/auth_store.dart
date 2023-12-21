@@ -19,7 +19,6 @@ abstract class AuthStoreBase with Store {
   UserModel? get userModel => _userModel;
 
   AuthStoreBase(this._authRepository) {
-    _userModel = null;
     _initialize();
   }
 
@@ -27,6 +26,7 @@ abstract class AuthStoreBase with Store {
   Future<void> _initialize() async {
     state = AuthLoadingState();
     await _authRepository.initialize();
+    _userModel = await _authRepository.userIsLogged();
     state = AuthInitState();
   }
 
@@ -88,6 +88,7 @@ abstract class AuthStoreBase with Store {
       });
   }
 
+  @action
   Future<bool> userIsLogged() async {
     _userModel = await _authRepository.userIsLogged();
     if (_userModel != null) {

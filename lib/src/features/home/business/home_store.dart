@@ -27,7 +27,7 @@ abstract class HomeStoreBase with Store {
   @action
   Future<void> getListProducts() async {
     state = HomeLoadingState();
-    listProducts = await _homeRepository.getListProducts();
+    listProducts = (await _homeRepository.getTeamCurrent()).listProducts;
     state = HomeSucessState();
   }
 

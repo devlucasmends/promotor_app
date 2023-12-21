@@ -83,16 +83,36 @@ class FirebaseServiceImp implements FirebaseService {
   }
 
   @override
-  Future<void> setTeam({required uidTeam}) async {
-    final instanceAuth = FirebaseAuth.instance;
+  Future<void> addUserListTeam({required uidTeam}) async {
     final instanceFireStore = FirebaseFirestore.instance;
 
-    User? user = instanceAuth.currentUser;
-    CollectionReference users = instanceFireStore.collection('users');
+    final users = instanceFireStore.collection('users');
+    final teams = instanceFireStore.collection('teams');
+
+    final docTeam = teams.doc(uidTeam);
+    final snapshotTeam = await docTeam.get();
+    final teamCurrent = TeamModel.fromJson(snapshotTeam.data()!);
+
+    final docUser = users.doc(FirebaseAuth.instance.currentUser!.uid);
+    final snapShotUser = await docUser.get();
+
+    teamCurrent.listUsers.add(UserModel.fromJson(snapShotUser.data()!));
+
+    await teams.doc(uidTeam).update(teamCurrent.toJson());
+  }
+
+  @override
+  Future<void> setTeam({required uidTeam}) async {
+    final instanceFireStore = FirebaseFirestore.instance;
+
+    final users = instanceFireStore.collection('users');
+    User? user = FirebaseAuth.instance.currentUser;
 
     await users.doc(user!.uid).update({
       'team': uidTeam,
     });
+
+    await addUserListTeam(uidTeam: uidTeam);
   }
 
   @override
@@ -113,12 +133,15 @@ class FirebaseServiceImp implements FirebaseService {
             admin: user.uid,
             title: 'Time do ${userCurrent.name}',
             listProducts: [],
+            listUsers: [],
           ).toJson(),
         );
 
     await users.doc(user.uid).update({
       'team': idTeam,
     });
+
+    await addUserListTeam(uidTeam: idTeam);
   }
 
   @override
@@ -142,7 +165,7 @@ class FirebaseServiceImp implements FirebaseService {
   }
 
   @override
-  Future<List<ProductModel>> getListProducts() async {
+  Future<TeamModel> getTeamCurrent() async {
     final instanceFireStore = FirebaseFirestore.instance;
 
     final users = instanceFireStore.collection('users');
@@ -154,8 +177,8 @@ class FirebaseServiceImp implements FirebaseService {
     final docTeam = teams.doc(snapshotUser.get('team'));
     final snapshotTeam = await docTeam.get();
     final teamCurrent = TeamModel.fromJson(snapshotTeam.data()!);
-
-    return teamCurrent.listProducts;
+    final String dow = snapshotUser.get('team');
+    return teamCurrent;
   }
 
   @override
@@ -217,12 +240,28 @@ class FirebaseServiceImp implements FirebaseService {
     } on FirebaseException {
       return null;
     }
-    // if (FirebaseAuth.instance.currentUser != null) {
-    //   print(
-    //       '----------------------------${FirebaseAuth.instance.currentUser?.uid} -----------------');
-    // } else {
-    //   print(
-    //       'objectobjectobjectobjectobjectobjectobjectobjectobjectobjectobject\n\n\n\n\n\n');
-    // }
+  }
+
+  @override
+  Future<void> removeUserTeam({
+    required String uidTeam,
+    required String uidUser,
+    required int index,
+  }) async {
+    final instanceFireStore = FirebaseFirestore.instance;
+
+    final users = instanceFireStore.collection('users');
+    final teams = instanceFireStore.collection('teams');
+
+    final docTeam = teams.doc(uidTeam);
+    final snapshotTeam = await docTeam.get();
+    final teamCurrent = TeamModel.fromJson(snapshotTeam.data()!);
+
+    await users.doc(uidUser).update({
+      'team': '',
+    });
+
+    teamCurrent.listUsers.removeAt(index);
+    await teams.doc(uidTeam).update(teamCurrent.toJson());
   }
 }

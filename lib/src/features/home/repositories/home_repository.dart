@@ -1,4 +1,4 @@
-import 'package:promotor_app/src/shared/models/product_model.dart';
+import 'package:promotor_app/src/shared/models/team_model.dart';
 import 'package:promotor_app/src/shared/services/firebase/firebase_service.dart';
 
 class HomeRepository {
@@ -6,7 +6,7 @@ class HomeRepository {
 
   HomeRepository(this._firebaseService);
 
-  Future<List<ProductModel>> getListProducts() async {
-    return await _firebaseService.getListProducts();
+  Future<TeamModel> getTeamCurrent() async {
+    return await _firebaseService.getTeamCurrent();
   }
 }

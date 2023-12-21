@@ -18,6 +18,7 @@ class UserModel {
         name: json['name'].toString(),
         phone: json['phone'].toString(),
         email: json['email'].toString(),
+        team: json['team'].toString(),
       );
 
   Map<String, dynamic> toJson() {
@@ -26,6 +27,7 @@ class UserModel {
       'name': name,
       'phone': phone,
       'email': email,
+      'team': team,
     };
   }
 }

@@ -29,7 +29,12 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
     _controller.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
         if (await authStore.userIsLogged()) {
-          if (mounted) context.go('/home');
+          if (authStore.userModel!.team == '' ||
+              authStore.userModel!.team.isEmpty) {
+            if (context.mounted) context.go('/team');
+          } else {
+            if (context.mounted) context.go('/home');
+          }
         } else {
           if (mounted) context.go('/sign_in');
         }
@@ -45,20 +50,26 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Observer(
-      builder: (context) {
-        if (authStore.state is AuthLoadingState) {
-          return const Center(child: CircularProgressIndicator.adaptive());
-        }
-        return Center(
-          child: Lottie.asset('assets/animations/splash_animation.json',
-              controller: _controller, onLoaded: (composition) {
-            _controller
-              ..duration = composition.duration
-              ..forward();
-          }),
-        );
-      },
-    ));
+    return Scaffold(
+      body: Observer(
+        builder: (context) {
+          if (authStore.state is AuthLoadingState) {
+            return const Center(child: CircularProgressIndicator.adaptive());
+          }
+          return Center(
+            child: Lottie.asset(
+              'assets/animations/logo_animation.json',
+              width: 200,
+              controller: _controller,
+              onLoaded: (composition) {
+                _controller
+                  ..duration = composition.duration
+                  ..forward();
+              },
+            ),
+          );
+        },
+      ),
+    );
   }
 }

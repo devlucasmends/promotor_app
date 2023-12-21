@@ -70,6 +70,14 @@ mixin _$AuthStore on AuthStoreBase, Store {
         .signUp(name: name, phone: phone, email: email, password: password));
   }
 
+  late final _$userIsLoggedAsyncAction =
+      AsyncAction('AuthStoreBase.userIsLogged', context: context);
+
+  @override
+  Future<bool> userIsLogged() {
+    return _$userIsLoggedAsyncAction.run(() => super.userIsLogged());
+  }
+
   @override
   String toString() {
     return '''
