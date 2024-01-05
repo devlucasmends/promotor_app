@@ -45,8 +45,8 @@ abstract class AuthStoreBase with Store {
       state = AuthFailureState(errorMessage: errorMessage);
     }).then((value) async {
       if (state is! AuthFailureState) {
-        state = AuthSucessState();
         _userModel = await _authRepository.userIsLogged();
+        state = AuthSucessState();
       }
     });
   }
@@ -66,8 +66,8 @@ abstract class AuthStoreBase with Store {
       state = AuthFailureState(errorMessage: errorMessage);
     }).then((value) async {
       if (state is! AuthFailureState) {
-        state = AuthSucessState();
         _userModel = await _authRepository.userIsLogged();
+        state = AuthSucessState();
       }
     });
   }

@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
@@ -24,10 +22,11 @@ class _HomePageState extends State<HomePage> {
   late AuthStore authStore;
   UserModel? userModel;
   List<ProductModel> listProducts = [];
-  TextStyle styleText = TextStyle(
+  TextStyle styleText = const TextStyle(
     fontSize: 15,
     fontWeight: FontWeight.w500,
   );
+  int differenceDays = 0;
 
   @override
   void initState() {
@@ -65,7 +64,7 @@ class _HomePageState extends State<HomePage> {
             ),
             componentListTile(
               text: 'Configurações',
-              path: '/config',
+              path: '/home/settings',
               icon: Icons.settings,
             ),
             componentListTile(
@@ -87,50 +86,65 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Center(child: Observer(builder: (_) {
-        if (home.state is HomeSucessState) {
-          listProducts = home.listProducts;
-          return ListView.builder(
-            itemCount: listProducts.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                leading: const Text('LEADING'),
-                title: Text(listProducts[index].description),
-                subtitle: Text(
-                  home.convertDate(
+      body: Center(
+        child: Observer(
+          builder: (_) {
+            if (home.state is HomeSucessState) {
+              listProducts = home.listProducts;
+              return ListView.builder(
+                itemCount: listProducts.length,
+                itemBuilder: (context, index) {
+                  differenceDays = home.convertDate(
                     listProducts[index].validate,
-                  ),
-                ),
-                trailing: Container(
-                  height: 50,
-                  width: 50,
-                  decoration: const BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      Map<String, dynamic> dataProduct = {
-                        'listProduct': listProducts,
-                        'index': index,
-                      };
+                  );
+                  return ListTile(
+                    leading: const Text('LEADING'),
+                    title: Text(listProducts[index].description),
+                    subtitle: Text(
+                      home.getStringValitade(
+                        differenceDays,
+                      ),
+                      style: TextStyle(
+                        color: Color(
+                          getColorValidate(
+                            differenceDays,
+                          ),
+                        ),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    trailing: Container(
+                      height: 50,
+                      width: 50,
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        onPressed: () {
+                          Map<String, dynamic> dataProduct = {
+                            'listProduct': listProducts,
+                            'index': index,
+                          };
 
-                      GoRouter.of(context)
-                          .push('/home/edit_product', extra: dataProduct)
-                          .whenComplete(
-                            () => home.getListProducts(),
-                          );
-                    },
-                    icon: const Icon(Icons.edit),
-                  ),
-                ),
+                          GoRouter.of(context)
+                              .push('/home/edit_product', extra: dataProduct)
+                              .whenComplete(
+                                () => home.getListProducts(),
+                              );
+                        },
+                        icon: const Icon(Icons.edit),
+                      ),
+                    ),
+                  );
+                },
               );
-            },
-          );
-        } else {
-          return const Center(child: CircularProgressIndicator.adaptive());
-        }
-      })),
+            } else {
+              return const Center(child: CircularProgressIndicator.adaptive());
+            }
+          },
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.white,
         onPressed: () {
@@ -144,6 +158,18 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  int getColorValidate(int differenceDays) {
+    final checkColor = home.checkColorValidate(differenceDays,
+        authStore.userModel!.redAlert, authStore.userModel!.yellowAlert);
+    if (checkColor == 'redAlert') {
+      return 0xFFFF0000;
+    } else if (checkColor == 'yellowAlert') {
+      return 0xFFFFE500;
+    } else {
+      return 0xFF00FF1A;
+    }
   }
 
   Widget componentListTile(

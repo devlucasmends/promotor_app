@@ -4,6 +4,9 @@ import 'package:promotor_app/src/features/auth/presentation/sign_in_page.dart';
 import 'package:promotor_app/src/features/auth/presentation/sign_up_page.dart';
 import 'package:promotor_app/src/features/home/presentation/home_page.dart';
 import 'package:promotor_app/src/features/products/presentation/product_page.dart';
+import 'package:promotor_app/src/features/settings/presentation/settings_page.dart';
+import 'package:promotor_app/src/features/settings/presentation/update_name_page.dart';
+import 'package:promotor_app/src/features/settings/presentation/update_password_page.dart';
 import 'package:promotor_app/src/features/splash/presentation/splash_page.dart';
 import 'package:promotor_app/src/features/team/presentation/team_management_page.dart';
 import 'package:promotor_app/src/features/team/presentation/team_page.dart';
@@ -59,6 +62,20 @@ final routes = GoRouter(
         GoRoute(
           path: 'team_management',
           builder: (context, state) => const TeamManagementPage(),
+        ),
+        GoRoute(
+          path: 'settings',
+          builder: (context, state) => const SettingsPage(),
+          routes: [
+            GoRoute(
+              path: 'update_name',
+              builder: (context, state) => const UpdateNamePage(),
+            ),
+            GoRoute(
+              path: 'update_password',
+              builder: (context, state) => const UpdatePasswordPage(),
+            ),
+          ],
         ),
       ],
     ),

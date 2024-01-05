@@ -28,7 +28,7 @@ class _TeamManagementPageState extends State<TeamManagementPage> {
 
     teamStore.getTeamCurrent();
     authStore.userIsLogged();
-    setState(() {});
+
     super.initState();
   }
 
@@ -39,7 +39,9 @@ class _TeamManagementPageState extends State<TeamManagementPage> {
       body: Center(
         child: Observer(
           builder: (context) {
-            if (teamStore.state is TeamSucessState) {
+            if (teamStore.state is TeamLoadingState) {
+              return const Center(child: CircularProgressIndicator.adaptive());
+            } else {
               if (teamStore.teamCurrent!.admin == authStore.userModel!.uid) {
                 return ListView.separated(
                   itemCount: teamStore.teamCurrent!.listUsers.length,
@@ -72,20 +74,19 @@ class _TeamManagementPageState extends State<TeamManagementPage> {
                                           onPressed: () async {
                                             await teamStore
                                                 .removeUserTeam(
-                                                  uidTeam: teamStore
-                                                      .teamCurrent!
-                                                      .listUsers[index]
-                                                      .team,
-                                                  uidUser: teamStore
-                                                      .teamCurrent!
-                                                      .listUsers[index]
-                                                      .uid,
-                                                  index: index,
-                                                )
+                                              uidTeam: teamStore.teamCurrent!
+                                                  .listUsers[index].team,
+                                              uidUser: teamStore.teamCurrent!
+                                                  .listUsers[index].uid,
+                                              index: index,
+                                            )
                                                 .whenComplete(
-                                                  () => teamStore
-                                                      .getTeamCurrent(),
-                                                );
+                                              () async {
+                                                context.pop();
+                                                await teamStore
+                                                    .getTeamCurrent();
+                                              },
+                                            );
                                           },
                                         ),
                                       ],
@@ -130,8 +131,6 @@ class _TeamManagementPageState extends State<TeamManagementPage> {
                   ),
                 );
               }
-            } else {
-              return const Center(child: CircularProgressIndicator.adaptive());
             }
           },
         ),

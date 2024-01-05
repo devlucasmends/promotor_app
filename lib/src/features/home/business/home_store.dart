@@ -32,10 +32,10 @@ abstract class HomeStoreBase with Store {
   }
 
   @action
-  String convertDate(String validate) {
-    final day = int.parse(validate.substring(0, 2));
-    final month = int.parse(validate.substring(3, 5));
-    final year = int.parse(validate.substring(6));
+  int convertDate(String validity) {
+    final day = int.parse(validity.substring(0, 2));
+    final month = int.parse(validity.substring(3, 5));
+    final year = int.parse(validity.substring(6));
     final currentDate = DateTime(
       DateTime.now().year,
       DateTime.now().month,
@@ -45,11 +45,27 @@ abstract class HomeStoreBase with Store {
 
     final differenceDays = validateProduct.difference(currentDate).inDays;
 
+    return differenceDays;
+  }
+
+  @action
+  String getStringValitade(int differenceDays) {
     if (differenceDays < 0) {
       return 'Vencido a ${differenceDays * (-1)} Dias';
     } else if (differenceDays == 0) {
       return 'Vence Hoje';
     }
     return 'Vence em $differenceDays Dias';
+  }
+
+  @action
+  String checkColorValidate(int differenceDays, int redAlert, int yellowAlert) {
+    if (differenceDays < redAlert) {
+      return 'redAlert';
+    } else if (differenceDays < yellowAlert) {
+      return 'yellowAlert';
+    } else {
+      return 'safeZone';
+    }
   }
 }

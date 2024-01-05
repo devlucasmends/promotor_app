@@ -177,7 +177,6 @@ class FirebaseServiceImp implements FirebaseService {
     final docTeam = teams.doc(snapshotUser.get('team'));
     final snapshotTeam = await docTeam.get();
     final teamCurrent = TeamModel.fromJson(snapshotTeam.data()!);
-    final String dow = snapshotUser.get('team');
     return teamCurrent;
   }
 
@@ -233,7 +232,6 @@ class FirebaseServiceImp implements FirebaseService {
         final docUser =
             FirebaseFirestore.instance.collection('users').doc(currentUser.uid);
         final snapshot = await docUser.get();
-
         userModel = UserModel.fromJson(snapshot.data()!);
       }
       return userModel;
@@ -263,5 +261,41 @@ class FirebaseServiceImp implements FirebaseService {
 
     teamCurrent.listUsers.removeAt(index);
     await teams.doc(uidTeam).update(teamCurrent.toJson());
+  }
+
+  @override
+  Future<UserModel> getUser() async {
+    final instance = FirebaseAuth.instance.currentUser;
+
+    final docUser =
+        FirebaseFirestore.instance.collection('users').doc(instance!.uid);
+    final snapshot = await docUser.get();
+
+    return UserModel.fromJson(snapshot.data()!);
+  }
+
+  @override
+  Future<void> updatePassword(
+      {required String oldPassword, required String newPassword}) async {
+    try {
+      final user = FirebaseAuth.instance;
+      final credential = EmailAuthProvider.credential(
+          email: user.currentUser!.email!, password: oldPassword);
+      await user.currentUser?.reauthenticateWithCredential(credential);
+      await user.currentUser?.updatePassword(newPassword);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        _throwFirebaseException(5, 'Este email já está sendo utilizado');
+      } else if (e.code == 'user-not-found') {
+        _throwFirebaseException(3, 'Usuário não encontrado');
+      } else if (e.code == 'wrong-password') {
+        _throwFirebaseException(4, 'Senha antiga incorreta');
+      } else if (e.code == 'user-mismatch') {
+        _throwFirebaseException(10, 'Email e/ou senha inválidos');
+      } else if (e.code == 'requires-recent-login') {
+        _throwFirebaseException(10,
+            'Esta operação é confidencial e requer autenticação recente. Faça login novamente antes de tentar novamente esta solicitação');
+      }
+    }
   }
 }

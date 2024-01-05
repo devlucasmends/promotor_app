@@ -32,6 +32,14 @@ abstract class FirebaseService {
 
   Future<UserModel?> userIsLogged();
 
-  Future<void> removeUserTeam(
-      {required String uidTeam, required String uidUser, required int index});
+  Future<void> removeUserTeam({
+    required String uidTeam,
+    required String uidUser,
+    required int index,
+  });
+
+  Future<UserModel> getUser();
+
+  Future<void> updatePassword(
+      {required String oldPassword, required String newPassword});
 }

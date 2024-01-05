@@ -60,11 +60,33 @@ mixin _$HomeStore on HomeStoreBase, Store {
       ActionController(name: 'HomeStoreBase', context: context);
 
   @override
-  String convertDate(String validate) {
+  int convertDate(String validity) {
     final _$actionInfo = _$HomeStoreBaseActionController.startAction(
         name: 'HomeStoreBase.convertDate');
     try {
-      return super.convertDate(validate);
+      return super.convertDate(validity);
+    } finally {
+      _$HomeStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  String getStringValitade(int differenceDays) {
+    final _$actionInfo = _$HomeStoreBaseActionController.startAction(
+        name: 'HomeStoreBase.getStringValitade');
+    try {
+      return super.getStringValitade(differenceDays);
+    } finally {
+      _$HomeStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  String checkColorValidate(int differenceDays, int redAlert, int yellowAlert) {
+    final _$actionInfo = _$HomeStoreBaseActionController.startAction(
+        name: 'HomeStoreBase.checkColorValidate');
+    try {
+      return super.checkColorValidate(differenceDays, redAlert, yellowAlert);
     } finally {
       _$HomeStoreBaseActionController.endAction(_$actionInfo);
     }

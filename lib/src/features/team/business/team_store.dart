@@ -9,7 +9,6 @@ class TeamStore = TeamStoreBase with _$TeamStore;
 abstract class TeamStoreBase with Store {
   final TeamRepository _teamRepository;
   TeamModel? teamCurrent;
-  // List<UserModel> listUserTeam = [];
 
   @observable
   TeamState state = TeamInitState();
