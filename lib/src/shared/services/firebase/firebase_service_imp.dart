@@ -131,6 +131,7 @@ class FirebaseServiceImp implements FirebaseService {
     await teams.doc(idTeam).set(
           TeamModel(
             admin: user.uid,
+            uid: idTeam,
             title: 'Time do ${userCurrent.name}',
             listProducts: [],
             listUsers: [],
@@ -219,7 +220,9 @@ class FirebaseServiceImp implements FirebaseService {
       reference = '/${snapshotUser.get('team')}/img-$identifier.jpg';
 
       await storage.ref(reference).putFile(file);
-    } catch (e) {}
+    } catch (e) {
+      _throwFirebaseException(0, 'Erro Inesperado. Tente novamente...');
+    }
   }
 
   @override
@@ -297,5 +300,37 @@ class FirebaseServiceImp implements FirebaseService {
             'Esta operação é confidencial e requer autenticação recente. Faça login novamente antes de tentar novamente esta solicitação');
       }
     }
+  }
+
+  @override
+  Future<void> updateAlarm({required String alarm, required int days}) async {
+    final instanceFireStore = FirebaseFirestore.instance;
+
+    final users = instanceFireStore.collection('users');
+    final docUser = users.doc(FirebaseAuth.instance.currentUser!.uid);
+
+    if (alarm == 'redAlarm') {
+      await docUser.update({'redAlarm': days});
+    }
+    if (alarm == 'yellowAlarm') {
+      await docUser.update({'yellowAlarm': days});
+    }
+  }
+
+  @override
+  Future<void> removeItemList({
+    required List<ProductModel> list,
+    required int index,
+    required String uidTeam,
+  }) async {
+    final instanceFireStore = FirebaseFirestore.instance;
+
+    final teams = instanceFireStore.collection('teams');
+    final docTeam = teams.doc(uidTeam);
+
+    list.removeAt(index);
+
+    await docTeam
+        .update({'listProducts': list.map((e) => e.toJson()).toList()});
   }
 }

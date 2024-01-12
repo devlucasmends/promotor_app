@@ -58,6 +58,7 @@ abstract class AuthStoreBase with Store {
     required String email,
     required String password,
   }) async {
+    state = AuthLoadingState();
     await _authRepository
         .signUp(name: name, phone: phone, email: email, password: password)
         .catchError((error, stackTrace) async {

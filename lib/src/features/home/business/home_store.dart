@@ -68,4 +68,19 @@ abstract class HomeStoreBase with Store {
       return 'safeZone';
     }
   }
+
+  @action
+  Future<void> removeItemList({
+    required List<ProductModel> list,
+    required int index,
+    required String uidTeam,
+  }) async {
+    state = HomeLoadingState();
+    await _homeRepository.removeItemList(
+      list: list,
+      index: index,
+      uidTeam: uidTeam,
+    );
+    state = HomeSucessState();
+  }
 }

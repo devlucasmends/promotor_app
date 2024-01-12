@@ -18,6 +18,7 @@ class TeamManagementPage extends StatefulWidget {
 class _TeamManagementPageState extends State<TeamManagementPage> {
   late TeamStore teamStore;
   late AuthStore authStore;
+
   @override
   void initState() {
     final teamRepository = Provider.of<TeamRepository>(context, listen: false);
@@ -32,13 +33,80 @@ class _TeamManagementPageState extends State<TeamManagementPage> {
     super.initState();
   }
 
+  void showSnackBar({required Color? color, required String message}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: color,
+        duration: const Duration(seconds: 3),
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12))),
+        behavior: SnackBarBehavior.floating,
+        content: Text(message, style: const TextStyle(color: Colors.white)),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: const Text('Time'),
+        actions: [
+          IconButton(
+              onPressed: () {
+                if (teamStore.teamCurrent!.admin == authStore.userModel!.uid) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      actionsPadding: const EdgeInsets.only(bottom: 25),
+                      title: const Text('Codigo Acesso do Time'),
+                      content: const Text(
+                        'Selecione o código e envie para o novo membro.',
+                      ),
+                      actions: [
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.red,
+                              width: 2,
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: SelectableText(
+                              teamStore.teamCurrent!.uid,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                      actionsAlignment: MainAxisAlignment.center,
+                    ),
+                  );
+                } else {
+                  showSnackBar(
+                      color: Colors.red[300],
+                      message:
+                          'Sem permissão para convidar. Contate o Administrador.');
+                }
+              },
+              icon: const Icon(Icons.group_add_rounded))
+        ],
+      ),
       body: Center(
         child: Observer(
           builder: (context) {
+            if (teamStore.state is TeamFailureState) {
+              final errorMessage =
+                  (teamStore.state as TeamFailureState).errorMessage;
+
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                showSnackBar(color: Colors.red[300], message: errorMessage);
+              });
+            }
             if (teamStore.state is TeamLoadingState) {
               return const Center(child: CircularProgressIndicator.adaptive());
             } else {

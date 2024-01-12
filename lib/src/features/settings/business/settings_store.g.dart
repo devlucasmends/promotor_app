@@ -51,6 +51,15 @@ mixin _$SettingsStore on SettingsStoreBase, Store {
         .updatePassword(oldPassword: oldPassword, newPassword: newPassword));
   }
 
+  late final _$updateAlarmAsyncAction =
+      AsyncAction('SettingsStoreBase.updateAlarm', context: context);
+
+  @override
+  Future<void> updateAlarm({required String alert, required int days}) {
+    return _$updateAlarmAsyncAction
+        .run(() => super.updateAlarm(alert: alert, days: days));
+  }
+
   @override
   String toString() {
     return '''

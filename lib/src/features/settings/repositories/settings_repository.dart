@@ -17,4 +17,8 @@ class SettingsRepository {
       newPassword: newPassword,
     );
   }
+
+  Future<void> updateAlarm({required String alert, required int days}) async {
+    await _firebaseService.updateAlarm(alarm: alert, days: days);
+  }
 }

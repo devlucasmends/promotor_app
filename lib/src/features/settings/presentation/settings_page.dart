@@ -15,6 +15,7 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   late SettingsStore settingsStore;
+  TextEditingController daysAlertController = TextEditingController();
 
   @override
   void initState() {
@@ -33,7 +34,7 @@ class _SettingsPageState extends State<SettingsPage> {
         backgroundColor: Colors.green,
         leading: ElevatedButton(
           onPressed: () {
-            context.go('/home');
+            context.pop();
           },
           child: const Icon(Icons.turn_left),
         ),
@@ -72,20 +73,22 @@ class _SettingsPageState extends State<SettingsPage> {
                       userField: 'Alterar Senha',
                     ),
                     componentEditItem(
-                      nameField: 'Alerta Amarelo',
-                      userField: '${settingsStore.userModel.yellowAlert} Dias',
+                      nameField: 'Alarme Amarelo',
+                      userField: '${settingsStore.userModel.yellowAlarm} Dias',
                     ),
                     componentEditItem(
-                      nameField: 'Alerta Vermelho',
-                      userField: '${settingsStore.userModel.redAlert} Dias',
+                      nameField: 'Alarme Vermelho',
+                      userField: '${settingsStore.userModel.redAlarm} Dias',
                     ),
                     const SizedBox(height: 75),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        context.pop();
+                      },
                       child: const SizedBox(
                         height: 50,
                         width: 120,
-                        child: Center(child: Text('Salvar')),
+                        child: Center(child: Text('Voltar')),
                       ),
                     ),
                   ],
@@ -98,6 +101,75 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
         ),
       ),
+    );
+  }
+
+  showAlertDialog({required String alarm}) {
+    return AlertDialog(
+      shape: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(20),
+        ),
+      ),
+      title: const Text('Atualização de Alarme'),
+      content: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: 45,
+            width: 50,
+            child: TextField(
+              textAlign: TextAlign.center,
+              maxLength: 3,
+              controller: daysAlertController,
+              decoration: InputDecoration(
+                hintText: alarm == 'redAlarm'
+                    ? '${settingsStore.userModel.redAlarm}'
+                    : '${settingsStore.userModel.yellowAlarm}',
+                border: const UnderlineInputBorder(),
+                counterText: '',
+              ),
+              keyboardType: TextInputType.number,
+            ),
+          ),
+          const SizedBox(width: 5),
+          const Text(
+            'Dias',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          style: OutlinedButton.styleFrom(
+            shape: const StadiumBorder(),
+          ),
+          onPressed: () {
+            context.pop();
+          },
+          child: const Text('Cancelar'),
+        ),
+        TextButton(
+          style: OutlinedButton.styleFrom(
+            shape: const StadiumBorder(),
+          ),
+          onPressed: () async {
+            if (daysAlertController.text != '' &&
+                daysAlertController.text.isNotEmpty) {
+              await settingsStore
+                  .updateAlarm(
+                alert: alarm,
+                days: int.parse(daysAlertController.text),
+              )
+                  .whenComplete(() {
+                daysAlertController.text = '';
+                context.pop();
+              });
+            }
+          },
+          child: const Text('Confirmar'),
+        ),
+      ],
     );
   }
 
@@ -119,8 +191,23 @@ class _SettingsPageState extends State<SettingsPage> {
                 context.push('/home/settings/update_password');
               }
 
-              if (nameField == 'Alerta Amarelo') print('Alerta Amarelo');
-              if (nameField == 'Alerta Vermelho') print('Alerta Vermelho');
+              if (nameField == 'Alarme Amarelo') {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return showAlertDialog(alarm: 'yellowAlarm');
+                  },
+                );
+              }
+
+              if (nameField == 'Alarme Vermelho') {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return showAlertDialog(alarm: 'redAlarm');
+                  },
+                );
+              }
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,

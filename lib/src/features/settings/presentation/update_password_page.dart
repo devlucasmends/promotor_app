@@ -27,6 +27,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
         Provider.of<SettingsRepository>(context, listen: false);
     settingsStore = SettingsStore(settingsRepository);
     settingsStore.state = SettingsInitState();
+
     super.initState();
   }
 
@@ -184,7 +185,6 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
           child: TextFormField(
             textAlignVertical: TextAlignVertical.center,
             decoration: InputDecoration(
-              isDense: true,
               hintText: hintText,
               hintStyle: const TextStyle(fontSize: 18),
               border: OutlineInputBorder(

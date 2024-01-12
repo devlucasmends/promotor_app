@@ -8,6 +8,8 @@ class TeamStore = TeamStoreBase with _$TeamStore;
 
 abstract class TeamStoreBase with Store {
   final TeamRepository _teamRepository;
+
+  @observable
   TeamModel? teamCurrent;
 
   @observable
@@ -17,28 +19,33 @@ abstract class TeamStoreBase with Store {
     _initialize();
   }
 
+  @action
   Future<void> _initialize() async {
     await _teamRepository.initialize();
   }
 
+  @action
   Future<void> createTeam() async {
     state = TeamLoadingState();
     await _teamRepository.createTeam();
     state = TeamSucessState();
   }
 
+  @action
   Future<void> setTeam({required String uidTeam}) async {
     state = TeamLoadingState();
     await _teamRepository.setTeam(uidTeam: uidTeam);
     state = TeamSucessState();
   }
 
+  @action
   Future<void> getTeamCurrent() async {
     state = TeamLoadingState();
     teamCurrent = await _teamRepository.getTeamCurrent();
     state = TeamSucessState();
   }
 
+  @action
   Future<void> removeUserTeam({
     required String uidTeam,
     required String uidUser,

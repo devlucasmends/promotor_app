@@ -28,12 +28,34 @@ class _SignInPageState extends State<SignInPage> {
     authStore.userIsLogged();
   }
 
+  void showSnackBar({required Color? color, required String message}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: color,
+        duration: const Duration(seconds: 3),
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12))),
+        behavior: SnackBarBehavior.floating,
+        content: Text(message, style: const TextStyle(color: Colors.white)),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Observer(
           builder: (context) {
+            if (authStore.state is AuthFailureState) {
+              final errorMessage =
+                  (authStore.state as AuthFailureState).errorMessage;
+
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                showSnackBar(color: Colors.red[300], message: errorMessage);
+              });
+            }
+
             if (authStore.state is AuthLoadingState) {
               return const Center(child: CircularProgressIndicator.adaptive());
             } else {

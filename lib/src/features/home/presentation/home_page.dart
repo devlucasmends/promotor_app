@@ -4,9 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:promotor_app/src/features/home/business/home_state.dart';
 import 'package:promotor_app/src/features/home/business/home_store.dart';
 import 'package:promotor_app/src/features/home/repositories/home_repository.dart';
+import 'package:promotor_app/src/features/team/business/team_store.dart';
+import 'package:promotor_app/src/features/team/repositories/team_repository.dart';
 import 'package:promotor_app/src/shared/business/auth/auth_store.dart';
 import 'package:promotor_app/src/shared/models/product_model.dart';
-import 'package:promotor_app/src/shared/models/user_model.dart';
 import 'package:promotor_app/src/shared/repositories/auth/auth_repository.dart';
 import 'package:provider/provider.dart';
 
@@ -20,7 +21,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late HomeStore home;
   late AuthStore authStore;
-  UserModel? userModel;
+  late TeamStore teamStore;
   List<ProductModel> listProducts = [];
   TextStyle styleText = const TextStyle(
     fontSize: 15,
@@ -30,11 +31,14 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    final teamRepository = Provider.of<TeamRepository>(context, listen: false);
+    teamStore = TeamStore(teamRepository);
     final homeRepository = Provider.of<HomeRepository>(context, listen: false);
     home = HomeStore(homeRepository);
     final authRepository = Provider.of<AuthRepository>(context, listen: false);
     authStore = AuthStore(authRepository);
 
+    teamStore.getTeamCurrent();
     home.getListProducts();
     super.initState();
   }
@@ -91,53 +95,68 @@ class _HomePageState extends State<HomePage> {
           builder: (_) {
             if (home.state is HomeSucessState) {
               listProducts = home.listProducts;
-              return ListView.builder(
+              return ListView.separated(
                 itemCount: listProducts.length,
                 itemBuilder: (context, index) {
                   differenceDays = home.convertDate(
                     listProducts[index].validate,
                   );
-                  return ListTile(
-                    leading: const Text('LEADING'),
-                    title: Text(listProducts[index].description),
-                    subtitle: Text(
-                      home.getStringValitade(
-                        differenceDays,
-                      ),
-                      style: TextStyle(
-                        color: Color(
-                          getColorValidate(
-                            differenceDays,
-                          ),
+                  return InkWell(
+                    onLongPress: authStore.userModel!.uid ==
+                            teamStore.teamCurrent!.admin
+                        ? () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => deleteDialog(index: index),
+                            );
+                          }
+                        : null,
+                    child: ListTile(
+                      // leading: const Text('LEADING'),
+                      title: Text(listProducts[index].description),
+                      subtitle: Text(
+                        home.getStringValitade(
+                          differenceDays,
                         ),
-                        fontWeight: FontWeight.bold,
+                        style: TextStyle(
+                          color: Color(
+                            getColorValidate(
+                              differenceDays,
+                            ),
+                          ),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    trailing: Container(
-                      height: 50,
-                      width: 50,
-                      decoration: const BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                      child: IconButton(
-                        onPressed: () {
-                          Map<String, dynamic> dataProduct = {
-                            'listProduct': listProducts,
-                            'index': index,
-                          };
+                      trailing: Container(
+                        height: 50,
+                        width: 50,
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            Map<String, dynamic> dataProduct = {
+                              'listProduct': listProducts,
+                              'index': index,
+                            };
 
-                          GoRouter.of(context)
-                              .push('/home/edit_product', extra: dataProduct)
-                              .whenComplete(
-                                () => home.getListProducts(),
-                              );
-                        },
-                        icon: const Icon(Icons.edit),
+                            GoRouter.of(context)
+                                .push('/home/edit_product', extra: dataProduct)
+                                .whenComplete(
+                                  () => home.getListProducts(),
+                                );
+                          },
+                          icon: const Icon(Icons.edit),
+                        ),
                       ),
                     ),
                   );
                 },
+                separatorBuilder: (context, index) => const Divider(
+                  height: 0,
+                  thickness: 2,
+                ),
               );
             } else {
               return const Center(child: CircularProgressIndicator.adaptive());
@@ -162,7 +181,7 @@ class _HomePageState extends State<HomePage> {
 
   int getColorValidate(int differenceDays) {
     final checkColor = home.checkColorValidate(differenceDays,
-        authStore.userModel!.redAlert, authStore.userModel!.yellowAlert);
+        authStore.userModel!.redAlarm, authStore.userModel!.yellowAlarm);
     if (checkColor == 'redAlert') {
       return 0xFFFF0000;
     } else if (checkColor == 'yellowAlert') {
@@ -184,17 +203,41 @@ class _HomePageState extends State<HomePage> {
           style: styleText,
         ),
         onTap: () {
-          print(path);
           if (path == '/logout') {
             authStore.signOut();
             context.go('/sign_in');
           } else {
-            context.push(path).whenComplete(
-                  () => home.getListProducts(),
-                );
+            context.pop();
+            context.push(path).then((value) async {
+              await home.getListProducts();
+            });
           }
         },
       ),
+    );
+  }
+
+  deleteDialog({required int index}) {
+    return AlertDialog(
+      title: const Text('Deseja remover este item?'),
+      content: const Text('Você tem certeza que deseja remover este item?'),
+      actions: [
+        TextButton(
+          onPressed: () => context.pop(),
+          child: const Text('Cancelar'),
+        ),
+        TextButton(
+          onPressed: () {
+            home.removeItemList(
+              list: home.listProducts,
+              index: index,
+              uidTeam: authStore.userModel!.team,
+            );
+            context.pop();
+          },
+          child: const Text('Confirmar'),
+        ),
+      ],
     );
   }
 }

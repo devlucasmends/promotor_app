@@ -40,6 +40,16 @@ abstract class FirebaseService {
 
   Future<UserModel> getUser();
 
-  Future<void> updatePassword(
-      {required String oldPassword, required String newPassword});
+  Future<void> updatePassword({
+    required String oldPassword,
+    required String newPassword,
+  });
+
+  Future<void> removeItemList({
+    required List<ProductModel> list,
+    required int index,
+    required String uidTeam,
+  });
+
+  Future<void> updateAlarm({required String alarm, required int days});
 }

@@ -4,16 +4,16 @@ class UserModel {
   final String phone;
   final String email;
   final String team;
-  final int yellowAlert;
-  final int redAlert;
+  final int yellowAlarm;
+  final int redAlarm;
 
   UserModel({
     required this.uid,
     required this.name,
     required this.phone,
     required this.email,
-    this.yellowAlert = 30,
-    this.redAlert = 15,
+    this.yellowAlarm = 30,
+    this.redAlarm = 15,
     this.team = '',
   });
 
@@ -23,8 +23,8 @@ class UserModel {
         phone: json['phone'].toString(),
         email: json['email'].toString(),
         team: json['team'].toString(),
-        yellowAlert: json['yellowAlarm'] ?? 30,
-        redAlert: json['redAlarm'] ?? 15,
+        yellowAlarm: json['yellowAlarm'] ?? 30,
+        redAlarm: json['redAlarm'] ?? 15,
       );
 
   Map<String, dynamic> toJson() {
@@ -34,8 +34,8 @@ class UserModel {
       'phone': phone,
       'email': email,
       'team': team,
-      'yellowAlarm': yellowAlert,
-      'redAlarm': redAlert,
+      'yellowAlarm': yellowAlarm,
+      'redAlarm': redAlarm,
     };
   }
 }

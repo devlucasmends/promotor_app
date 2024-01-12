@@ -3,12 +3,14 @@ import 'package:promotor_app/src/shared/models/user_model.dart';
 
 class TeamModel {
   final String admin;
+  final String uid;
   final String title;
   final List<ProductModel> listProducts;
   final List<UserModel> listUsers;
 
   TeamModel({
     required this.admin,
+    required this.uid,
     required this.title,
     required this.listProducts,
     required this.listUsers,
@@ -25,6 +27,7 @@ class TeamModel {
 
     return TeamModel(
       admin: json['admin'].toString(),
+      uid: json['uid'].toString(),
       title: json['title'].toString(),
       listProducts: products,
       listUsers: users,
@@ -40,6 +43,7 @@ class TeamModel {
 
     return {
       'admin': admin,
+      'uid': uid,
       'title': title,
       'listProducts': productsJsonList,
       'listUsers': usersJsonList,

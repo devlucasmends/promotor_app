@@ -54,4 +54,12 @@ abstract class SettingsStoreBase with Store {
       }
     });
   }
+
+  @action
+  Future<void> updateAlarm({required String alert, required int days}) async {
+    state = SettingsLoadingState();
+    await _settingsRepository.updateAlarm(alert: alert, days: days);
+    userModel = (await getUser())!;
+    state = SettingsSucessState();
+  }
 }

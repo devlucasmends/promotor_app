@@ -56,6 +56,18 @@ mixin _$HomeStore on HomeStoreBase, Store {
     return _$getListProductsAsyncAction.run(() => super.getListProducts());
   }
 
+  late final _$removeItemListAsyncAction =
+      AsyncAction('HomeStoreBase.removeItemList', context: context);
+
+  @override
+  Future<void> removeItemList(
+      {required List<ProductModel> list,
+      required int index,
+      required String uidTeam}) {
+    return _$removeItemListAsyncAction.run(
+        () => super.removeItemList(list: list, index: index, uidTeam: uidTeam));
+  }
+
   late final _$HomeStoreBaseActionController =
       ActionController(name: 'HomeStoreBase', context: context);
 
