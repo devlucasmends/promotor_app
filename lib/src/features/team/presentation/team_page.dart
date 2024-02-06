@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:promotor_app/src/features/team/business/team_state.dart';
 import 'package:promotor_app/src/features/team/business/team_store.dart';
 import 'package:promotor_app/src/features/team/repositories/team_repository.dart';
+import 'package:promotor_app/src/shared/repositories/auth/auth_repository.dart';
 import 'package:provider/provider.dart';
 
 class TeamPage extends StatefulWidget {
@@ -21,7 +22,8 @@ class _TeamPageState extends State<TeamPage> {
   void initState() {
     super.initState();
     final teamRepository = Provider.of<TeamRepository>(context, listen: false);
-    team = TeamStore(teamRepository);
+    final authRepository = Provider.of<AuthRepository>(context, listen: false);
+    team = TeamStore(teamRepository, authRepository);
   }
 
   @override

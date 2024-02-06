@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,6 +8,7 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:promotor_app/src/features/products/business/product_state.dart';
 import 'package:promotor_app/src/features/products/business/product_store.dart';
 import 'package:promotor_app/src/features/products/repositories/product_repository.dart';
+import 'package:promotor_app/src/shared/componets/my_clipper.dart';
 import 'package:promotor_app/src/shared/models/product_model.dart';
 import 'package:provider/provider.dart';
 
@@ -38,6 +40,7 @@ class _ProductPageState extends State<ProductPage> {
   TextEditingController barCode = TextEditingController();
   TextEditingController validate = TextEditingController();
   late ProductStore productStore;
+  String pathPhoto = '';
 
   var maskDate = MaskTextInputFormatter(
     mask: '##/##/####',
@@ -55,6 +58,20 @@ class _ProductPageState extends State<ProductPage> {
       listen: false,
     );
     productStore = ProductStore(productRepository);
+    pathPhoto = widget.linkPhoto;
+  }
+
+  void showSnackBar({required Color? color, required String message}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: color,
+        duration: const Duration(seconds: 3),
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12))),
+        behavior: SnackBarBehavior.floating,
+        content: Text(message, style: const TextStyle(color: Colors.white)),
+      ),
+    );
   }
 
   @override
@@ -62,7 +79,6 @@ class _ProductPageState extends State<ProductPage> {
     description.text = widget.description;
     barCode.text = widget.barCode;
     validate.text = widget.validate;
-    String pathPhoto = '';
 
     return Scaffold(
       appBar: AppBar(
@@ -76,31 +92,124 @@ class _ProductPageState extends State<ProductPage> {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(15),
-          child: Observer(
-            builder: (context) {
+          child: Observer(builder: (context) {
+            if (productStore.state is ProductFailureState) {
+              final errorMessage =
+                  (productStore.state as ProductFailureState).errorMessage;
+
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                showSnackBar(color: Colors.red[300], message: errorMessage);
+              });
+            }
+
+            if (productStore.state is ProductLoadingState) {
+              return const Center(child: CircularProgressIndicator.adaptive());
+            } else {
               return SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ClipOval(
-                      child: Center(
-                        child: InkWell(
-                          onTap: () async {
-                            pathPhoto = await productStore
-                                .getImage(ImageSource.gallery);
-                          },
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.grey,
-                            ),
-                            child: const Padding(
-                              padding: EdgeInsets.all(20.0),
-                              child: Icon(
-                                Icons.add_photo_alternate_outlined,
-                                size: 100,
-                                color: Colors.black,
+                    Center(
+                      child: InkWell(
+                        onTap: () async {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) {
+                              return SizedBox(
+                                height: 150,
+                                child: Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        // InkWell(
+                                        //   onTap: () async {
+                                        //     pathPhoto = await productStore
+                                        //         .getImage(ImageSource.camera);
+                                        //   },
+                                        //   splashFactory:
+                                        //       NoSplash.splashFactory,
+                                        //   child: const ListTile(
+                                        //     leading: Icon(Icons.camera_alt),
+                                        //     title: Text('Câmera'),
+                                        //   ),
+                                        // ),
+                                        // const Divider(),
+                                        InkWell(
+                                          onTap: () async {
+                                            if (barCode.text.isNotEmpty ||
+                                                barCode.text != '') {
+                                              context.pop();
+
+                                              await productStore
+                                                  .getImage(
+                                                    source: ImageSource.gallery,
+                                                    barCode: widget.barCode,
+                                                  )
+                                                  .then(
+                                                    (value) =>
+                                                        pathPhoto = value,
+                                                  )
+                                                  .onError((error, stackTrace) {
+                                                setState(() {});
+                                                return '';
+                                              });
+                                            } else {
+                                              context.pop();
+                                              showSnackBar(
+                                                  color: Colors.red[300],
+                                                  message:
+                                                      'Preencha o Código de Barras');
+                                            }
+                                          },
+                                          splashFactory: NoSplash.splashFactory,
+                                          child: const ListTile(
+                                            leading:
+                                                Icon(Icons.panorama_outlined),
+                                            title: Text('Galeria'),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: ClipOval(
+                            clipper: MyClipper(),
+                            child: Container(
+                              height: 200,
+                              width: 200,
+                              decoration: BoxDecoration(
+                                border: Border.all(),
+                                color: Colors.green,
                               ),
+                              child: pathPhoto.isEmpty || pathPhoto == ''
+                                  ? const Icon(
+                                      Icons.add_photo_alternate_outlined,
+                                      size: 100,
+                                      color: Colors.black,
+                                    )
+                                  : CachedNetworkImage(
+                                      fit: BoxFit.cover,
+                                      imageUrl: pathPhoto,
+                                      placeholder: (context, url) =>
+                                          const CircularProgressIndicator(),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(
+                                        Icons.add_photo_alternate_outlined,
+                                        size: 100,
+                                        color: Colors.black,
+                                      ),
+                                    ),
                             ),
                           ),
                         ),
@@ -185,34 +294,39 @@ class _ProductPageState extends State<ProductPage> {
                     ElevatedButton(
                       onPressed: () async {
                         if (widget.isAddPage) {
-                          await productStore.addProduct(
-                            ProductModel(
-                              description: description.text,
-                              barCode: barCode.text,
-                              validate: maskDate.getMaskedText(),
-                              linkPhoto: pathPhoto,
-                            ),
-                          );
-
-                          await productStore.addImageStorage(
-                            pathPhoto,
-                            barCode.text,
-                          );
+                          if (productStore.checkSingleBarCode(
+                            barCode: barCode.text,
+                          )) {
+                            await productStore.addProduct(
+                              ProductModel(
+                                description: description.text,
+                                barCode: barCode.text,
+                                validate: maskDate.getMaskedText(),
+                                linkPhoto: pathPhoto,
+                              ),
+                            );
+                          } else {
+                            showSnackBar(
+                                color: Colors.red[300],
+                                message: 'Codigo de Barras já existe na lista');
+                          }
                         } else {
-                          await productStore.editProduct(
-                            product: ProductModel(
-                              description: description.text,
-                              barCode: barCode.text,
-                              validate: validate.text,
-                              linkPhoto: pathPhoto,
-                            ),
-                            index: widget.indexProduct,
-                          );
-
-                          await productStore.addImageStorage(
-                            pathPhoto,
-                            barCode.text,
-                          );
+                          if (productStore.checkSingleBarCode(
+                              barCode: barCode.text)) {
+                            await productStore.editProduct(
+                              product: ProductModel(
+                                description: description.text,
+                                barCode: barCode.text,
+                                validate: validate.text,
+                                linkPhoto: pathPhoto,
+                              ),
+                              index: widget.indexProduct,
+                            );
+                          } else {
+                            showSnackBar(
+                                color: Colors.red[300],
+                                message: 'Codigo de Barras já existe na lista');
+                          }
                         }
                         if (productStore.state is ProductSucessState) {
                           if (mounted) context.pop();
@@ -223,10 +337,38 @@ class _ProductPageState extends State<ProductPage> {
                   ],
                 ),
               );
-            },
-          ),
+            }
+          }),
         ),
       ),
     );
   }
+
+  //TODO: Quando Salva reseta o conteudo da patPhoto
+  // Widget changeImageProduct(){
+  //   return Text();
+
+  // }
+
+  /**
+   *                              widget.linkPhoto.isEmpty ||
+                                      widget.linkPhoto == ''
+                                  ? const Icon(
+                                      Icons.add_photo_alternate_outlined,
+                                      size: 100,
+                                      color: Colors.black,
+                                    )
+                                  : CachedNetworkImage(
+                                      fit: BoxFit.cover,
+                                      imageUrl: widget.linkPhoto,
+                                      placeholder: (context, url) =>
+                                          const CircularProgressIndicator(),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(
+                                        Icons.add_photo_alternate_outlined,
+                                        size: 100,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+   */
 }

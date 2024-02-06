@@ -16,6 +16,7 @@ class ProductModel {
       description: json['description'].toString(),
       barCode: json['barCode'].toString(),
       validate: json['validate'].toString(),
+      linkPhoto: json['linkPhoto'].toString(),
     );
   }
 

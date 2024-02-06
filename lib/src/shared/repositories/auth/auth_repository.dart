@@ -34,7 +34,7 @@ class AuthRepository {
     await _firebaseService.signOut();
   }
 
-  Future<UserModel?> userIsLogged() async {
-    return await _firebaseService.userIsLogged();
+  Future<UserModel?> userLogged() async {
+    return await _firebaseService.userLogged();
   }
 }

@@ -47,6 +47,9 @@ dependencies:
   flutter_barcode_scanner: ^2.0.0
   image_picker: ^1.0.4
   lottie: ^2.7.0
+  cached_network_image: ^3.3.1
+  url_launcher: ^6.2.4
+  font_awesome_flutter: ^10.7.0
 
 
   # The following adds the Cupertino Icons font to your application.

@@ -9,6 +9,14 @@ part of 'home_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$HomeStore on HomeStoreBase, Store {
+  Computed<UserModel?>? _$userModelComputed;
+
+  @override
+  UserModel? get userModel =>
+      (_$userModelComputed ??= Computed<UserModel?>(() => super.userModel,
+              name: 'HomeStoreBase.userModel'))
+          .value;
+
   late final _$stateAtom = Atom(name: 'HomeStoreBase.state', context: context);
 
   @override
@@ -37,6 +45,22 @@ mixin _$HomeStore on HomeStoreBase, Store {
   set listProducts(List<ProductModel> value) {
     _$listProductsAtom.reportWrite(value, super.listProducts, () {
       super.listProducts = value;
+    });
+  }
+
+  late final _$_userModelAtom =
+      Atom(name: 'HomeStoreBase._userModel', context: context);
+
+  @override
+  UserModel? get _userModel {
+    _$_userModelAtom.reportRead();
+    return super._userModel;
+  }
+
+  @override
+  set _userModel(UserModel? value) {
+    _$_userModelAtom.reportWrite(value, super._userModel, () {
+      super._userModel = value;
     });
   }
 
@@ -108,7 +132,8 @@ mixin _$HomeStore on HomeStoreBase, Store {
   String toString() {
     return '''
 state: ${state},
-listProducts: ${listProducts}
+listProducts: ${listProducts},
+userModel: ${userModel}
     ''';
   }
 }

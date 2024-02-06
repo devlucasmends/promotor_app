@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +8,7 @@ import 'package:promotor_app/src/features/home/repositories/home_repository.dart
 import 'package:promotor_app/src/features/team/business/team_store.dart';
 import 'package:promotor_app/src/features/team/repositories/team_repository.dart';
 import 'package:promotor_app/src/shared/business/auth/auth_store.dart';
+import 'package:promotor_app/src/shared/componets/my_clipper.dart';
 import 'package:promotor_app/src/shared/models/product_model.dart';
 import 'package:promotor_app/src/shared/repositories/auth/auth_repository.dart';
 import 'package:provider/provider.dart';
@@ -29,14 +31,16 @@ class _HomePageState extends State<HomePage> {
   );
   int differenceDays = 0;
 
+  var imageError = const Icon(Icons.close);
+
   @override
   void initState() {
-    final teamRepository = Provider.of<TeamRepository>(context, listen: false);
-    teamStore = TeamStore(teamRepository);
-    final homeRepository = Provider.of<HomeRepository>(context, listen: false);
-    home = HomeStore(homeRepository);
     final authRepository = Provider.of<AuthRepository>(context, listen: false);
     authStore = AuthStore(authRepository);
+    final teamRepository = Provider.of<TeamRepository>(context, listen: false);
+    teamStore = TeamStore(teamRepository, authRepository);
+    final homeRepository = Provider.of<HomeRepository>(context, listen: false);
+    home = HomeStore(homeRepository, authRepository);
 
     teamStore.getTeamCurrent();
     home.getListProducts();
@@ -112,7 +116,31 @@ class _HomePageState extends State<HomePage> {
                           }
                         : null,
                     child: ListTile(
-                      // leading: const Text('LEADING'),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 5),
+                      leading: ClipOval(
+                        clipper: MyClipper(),
+                        child: Container(
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              width: 1,
+                            ),
+                          ),
+                          child: listProducts[index].linkPhoto.isEmpty ||
+                                  listProducts[index].linkPhoto == ''
+                              ? imageError
+                              : CachedNetworkImage(
+                                  imageUrl: listProducts[index].linkPhoto,
+                                  placeholder: (context, url) =>
+                                      const CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) =>
+                                      imageError,
+                                  fit: BoxFit.cover,
+                                ),
+                        ),
+                      ),
                       title: Text(listProducts[index].description),
                       subtitle: Text(
                         home.getStringValitade(

@@ -24,13 +24,19 @@ abstract class FirebaseService {
 
   Future<void> addProduct({required ProductModel productModel});
 
-  Future<void> editProduct({required ProductModel product, required int index});
+  Future<void> editProduct(
+      {required ProductModel product,
+      required int index,
+      required String idTeamCurrent});
 
   Future<TeamModel> getTeamCurrent();
 
-  Future<void> addImageStorage(String path, String identifier);
+  Future<String> addImageStorage(
+      {required String path,
+      required String identifier,
+      required UserModel user});
 
-  Future<UserModel?> userIsLogged();
+  Future<UserModel?> userLogged();
 
   Future<void> removeUserTeam({
     required String uidTeam,

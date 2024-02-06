@@ -28,12 +28,14 @@ class AppWidget extends StatelessWidget {
           return AuthStore(authRepository);
         }),
         Provider<TeamStore>(create: (context) {
+          final authRepository = context.read<AuthRepository>();
           final teamRepository = context.read<TeamRepository>();
-          return TeamStore(teamRepository);
+          return TeamStore(teamRepository, authRepository);
         }),
         Provider<HomeStore>(create: (context) {
           final homeRepository = context.read<HomeRepository>();
-          return HomeStore(homeRepository);
+          final authRepository = context.read<AuthRepository>();
+          return HomeStore(homeRepository, authRepository);
         }),
         Provider<ProductStore>(create: (context) {
           final productRepository = context.read<ProductRepository>();
@@ -72,6 +74,10 @@ class AppWidget extends StatelessWidget {
         }),
       ],
       child: MaterialApp.router(
+        theme: ThemeData(
+          colorSchemeSeed: const Color(0xff6750a4),
+          useMaterial3: true,
+        ),
         routerDelegate: routes.routerDelegate,
         routeInformationParser: routes.routeInformationParser,
         routeInformationProvider: routes.routeInformationProvider,

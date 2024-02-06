@@ -16,6 +16,8 @@ abstract class AuthStoreBase with Store {
 
   @observable
   UserModel? _userModel;
+
+  @computed
   UserModel? get userModel => _userModel;
 
   AuthStoreBase(this._authRepository) {
@@ -26,7 +28,7 @@ abstract class AuthStoreBase with Store {
   Future<void> _initialize() async {
     state = AuthLoadingState();
     await _authRepository.initialize();
-    _userModel = await _authRepository.userIsLogged();
+    _userModel = await _authRepository.userLogged();
     state = AuthInitState();
   }
 
@@ -45,7 +47,7 @@ abstract class AuthStoreBase with Store {
       state = AuthFailureState(errorMessage: errorMessage);
     }).then((value) async {
       if (state is! AuthFailureState) {
-        _userModel = await _authRepository.userIsLogged();
+        _userModel = await _authRepository.userLogged();
         state = AuthSucessState();
       }
     });
@@ -67,7 +69,7 @@ abstract class AuthStoreBase with Store {
       state = AuthFailureState(errorMessage: errorMessage);
     }).then((value) async {
       if (state is! AuthFailureState) {
-        _userModel = await _authRepository.userIsLogged();
+        _userModel = await _authRepository.userLogged();
         state = AuthSucessState();
       }
     });
@@ -87,15 +89,5 @@ abstract class AuthStoreBase with Store {
         if (error is fe.FirebaseException) errorMessage = error.message;
         state = AuthFailureState(errorMessage: errorMessage);
       });
-  }
-
-  @action
-  Future<bool> userIsLogged() async {
-    _userModel = await _authRepository.userIsLogged();
-    if (_userModel != null) {
-      return true;
-    } else {
-      return false;
-    }
   }
 }

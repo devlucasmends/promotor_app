@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:promotor_app/src/features/team/business/team_state.dart';
 import 'package:promotor_app/src/features/team/business/team_store.dart';
 import 'package:promotor_app/src/features/team/repositories/team_repository.dart';
-import 'package:promotor_app/src/shared/business/auth/auth_store.dart';
 import 'package:promotor_app/src/shared/repositories/auth/auth_repository.dart';
 import 'package:provider/provider.dart';
 
@@ -17,18 +16,14 @@ class TeamManagementPage extends StatefulWidget {
 
 class _TeamManagementPageState extends State<TeamManagementPage> {
   late TeamStore teamStore;
-  late AuthStore authStore;
 
   @override
   void initState() {
-    final teamRepository = Provider.of<TeamRepository>(context, listen: false);
-    teamStore = TeamStore(teamRepository);
-
     final authRepository = Provider.of<AuthRepository>(context, listen: false);
-    authStore = AuthStore(authRepository);
+    final teamRepository = Provider.of<TeamRepository>(context, listen: false);
+    teamStore = TeamStore(teamRepository, authRepository);
 
     teamStore.getTeamCurrent();
-    authStore.userIsLogged();
 
     super.initState();
   }
@@ -54,7 +49,7 @@ class _TeamManagementPageState extends State<TeamManagementPage> {
         actions: [
           IconButton(
               onPressed: () {
-                if (teamStore.teamCurrent!.admin == authStore.userModel!.uid) {
+                if (teamStore.teamCurrent!.admin == teamStore.userModel!.uid) {
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
@@ -110,7 +105,7 @@ class _TeamManagementPageState extends State<TeamManagementPage> {
             if (teamStore.state is TeamLoadingState) {
               return const Center(child: CircularProgressIndicator.adaptive());
             } else {
-              if (teamStore.teamCurrent!.admin == authStore.userModel!.uid) {
+              if (teamStore.teamCurrent!.admin == teamStore.userModel!.uid) {
                 return ListView.separated(
                   itemCount: teamStore.teamCurrent!.listUsers.length,
                   itemBuilder: (context, index) {

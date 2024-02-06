@@ -12,9 +12,10 @@ import 'package:promotor_app/src/shared/exceptions/firebase_exception.dart'
     as fe;
 
 class FirebaseServiceImp implements FirebaseService {
-  FirebaseServiceImp() {
-    initialize();
-  }
+  //TODO
+  // FirebaseServiceImp() {
+  //   initialize();
+  // }
 
   void _throwFirebaseException(int statusCode, String message) {
     throw fe.FirebaseException(statusCode, message);
@@ -162,6 +163,12 @@ class FirebaseServiceImp implements FirebaseService {
 
     teamCurrent.listProducts.add(productModel);
 
+    teamCurrent.listProducts.sort((a, b) {
+      var dateA = DateTime.parse(a.validate.split('/').reversed.join());
+      var dateB = DateTime.parse(b.validate.split('/').reversed.join());
+      return dateA.compareTo(dateB);
+    });
+
     await teams.doc(idTeamCurrent).update(teamCurrent.toJson());
   }
 
@@ -181,19 +188,20 @@ class FirebaseServiceImp implements FirebaseService {
     return teamCurrent;
   }
 
-  @override
+  @override //TODO: Verificar se é bom ou não
   Future<void> editProduct({
     required ProductModel product,
     required int index,
+    required String idTeamCurrent,
   }) async {
     final instanceFireStore = FirebaseFirestore.instance;
 
-    final users = instanceFireStore.collection('users');
+    // final users = instanceFireStore.collection('users');
     final teams = instanceFireStore.collection('teams');
 
-    final docUser = users.doc(FirebaseAuth.instance.currentUser!.uid);
-    final snapshotUser = await docUser.get();
-    final String idTeamCurrent = snapshotUser.get('team');
+    // final docUser = users.doc(FirebaseAuth.instance.currentUser!.uid);
+    // final snapshotUser = await docUser.get();
+    // final String idTeamCurrent = snapshotUser.get('team');
 
     final docTeam = teams.doc(idTeamCurrent);
     final snapshotTeam = await docTeam.get();
@@ -201,39 +209,52 @@ class FirebaseServiceImp implements FirebaseService {
 
     teamCurrent.listProducts[index] = product;
 
+    teamCurrent.listProducts.sort((a, b) {
+      var dateA = DateTime.parse(a.validate.split('/').reversed.join());
+      var dateB = DateTime.parse(b.validate.split('/').reversed.join());
+      return dateA.compareTo(dateB);
+    });
+
     docTeam.update(teamCurrent.toJson());
   }
 
-  @override
-  Future<void> addImageStorage(String path, String identifier) async {
+  @override //TODO: Verificar se é bom ou não
+  Future<String> addImageStorage(
+      {required String path,
+      required String identifier,
+      required UserModel user}) async {
     final instanceFireStore = FirebaseFirestore.instance;
     final storage = FirebaseStorage.instance;
     String reference;
 
-    final users = instanceFireStore.collection('users');
-    final docUser = users.doc(FirebaseAuth.instance.currentUser!.uid);
-    final snapshotUser = await docUser.get();
+    // final users = instanceFireStore.collection('users');
+    // final docUser = users.doc(FirebaseAuth.instance.currentUser!.uid);
+    // final snapshotUser = await docUser.get();
 
     File file = File(path);
 
     try {
-      reference = '/${snapshotUser.get('team')}/img-$identifier.jpg';
+      reference = '${user.team}/img-$identifier.jpg';
 
       await storage.ref(reference).putFile(file);
+
+      return await storage.ref(reference).getDownloadURL();
     } catch (e) {
       _throwFirebaseException(0, 'Erro Inesperado. Tente novamente...');
     }
+    return '';
   }
 
   @override
-  Future<UserModel?> userIsLogged() async {
+  Future<UserModel?> userLogged() async {
     try {
-      final currentUser = FirebaseAuth.instance.currentUser;
+      final instance = FirebaseAuth.instance;
+      User? user = instance.currentUser;
       UserModel? userModel;
 
-      if (currentUser != null) {
+      if (user != null) {
         final docUser =
-            FirebaseFirestore.instance.collection('users').doc(currentUser.uid);
+            FirebaseFirestore.instance.collection('users').doc(user.uid);
         final snapshot = await docUser.get();
         userModel = UserModel.fromJson(snapshot.data()!);
       }
@@ -268,10 +289,11 @@ class FirebaseServiceImp implements FirebaseService {
 
   @override
   Future<UserModel> getUser() async {
-    final instance = FirebaseAuth.instance.currentUser;
+    final instance = FirebaseAuth.instance;
+    User? user = instance.currentUser;
 
     final docUser =
-        FirebaseFirestore.instance.collection('users').doc(instance!.uid);
+        FirebaseFirestore.instance.collection('users').doc(user!.uid);
     final snapshot = await docUser.get();
 
     return UserModel.fromJson(snapshot.data()!);

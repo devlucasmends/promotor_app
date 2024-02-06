@@ -24,8 +24,6 @@ class _SignInPageState extends State<SignInPage> {
 
     final authRepository = Provider.of<AuthRepository>(context, listen: false);
     authStore = AuthStore(authRepository);
-
-    authStore.userIsLogged();
   }
 
   void showSnackBar({required Color? color, required String message}) {

@@ -25,6 +25,30 @@ mixin _$ProductStore on ProductStoreBase, Store {
     });
   }
 
+  late final _$listProductsAtom =
+      Atom(name: 'ProductStoreBase.listProducts', context: context);
+
+  @override
+  List<ProductModel> get listProducts {
+    _$listProductsAtom.reportRead();
+    return super.listProducts;
+  }
+
+  @override
+  set listProducts(List<ProductModel> value) {
+    _$listProductsAtom.reportWrite(value, super.listProducts, () {
+      super.listProducts = value;
+    });
+  }
+
+  late final _$_initializeAsyncAction =
+      AsyncAction('ProductStoreBase._initialize', context: context);
+
+  @override
+  Future<void> _initialize() {
+    return _$_initializeAsyncAction.run(() => super._initialize());
+  }
+
   late final _$addProductAsyncAction =
       AsyncAction('ProductStoreBase.addProduct', context: context);
 
@@ -55,23 +79,39 @@ mixin _$ProductStore on ProductStoreBase, Store {
       AsyncAction('ProductStoreBase.getImage', context: context);
 
   @override
-  Future<String> getImage(ImageSource source) {
-    return _$getImageAsyncAction.run(() => super.getImage(source));
+  Future<String> getImage(
+      {required ImageSource source, required String barCode}) {
+    return _$getImageAsyncAction
+        .run(() => super.getImage(source: source, barCode: barCode));
   }
 
-  late final _$addImageStorageAsyncAction =
-      AsyncAction('ProductStoreBase.addImageStorage', context: context);
+  late final _$getListProductsAsyncAction =
+      AsyncAction('ProductStoreBase.getListProducts', context: context);
 
   @override
-  Future<void> addImageStorage(String path, String identifier) {
-    return _$addImageStorageAsyncAction
-        .run(() => super.addImageStorage(path, identifier));
+  Future<void> getListProducts() {
+    return _$getListProductsAsyncAction.run(() => super.getListProducts());
+  }
+
+  late final _$ProductStoreBaseActionController =
+      ActionController(name: 'ProductStoreBase', context: context);
+
+  @override
+  bool checkSingleBarCode({required String barCode}) {
+    final _$actionInfo = _$ProductStoreBaseActionController.startAction(
+        name: 'ProductStoreBase.checkSingleBarCode');
+    try {
+      return super.checkSingleBarCode(barCode: barCode);
+    } finally {
+      _$ProductStoreBaseActionController.endAction(_$actionInfo);
+    }
   }
 
   @override
   String toString() {
     return '''
-state: ${state}
+state: ${state},
+listProducts: ${listProducts}
     ''';
   }
 }

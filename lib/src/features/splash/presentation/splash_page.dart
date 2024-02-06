@@ -28,7 +28,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
 
     _controller.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
-        if (await authStore.userIsLogged()) {
+        if (authStore.userModel != null) {
           if (authStore.userModel!.team == '' ||
               authStore.userModel!.team.isEmpty) {
             if (context.mounted) context.go('/team');

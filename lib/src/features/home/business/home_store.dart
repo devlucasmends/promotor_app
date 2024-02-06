@@ -2,12 +2,15 @@ import 'package:mobx/mobx.dart';
 import 'package:promotor_app/src/features/home/business/home_state.dart';
 import 'package:promotor_app/src/features/home/repositories/home_repository.dart';
 import 'package:promotor_app/src/shared/models/product_model.dart';
+import 'package:promotor_app/src/shared/models/user_model.dart';
+import 'package:promotor_app/src/shared/repositories/auth/auth_repository.dart';
 part 'home_store.g.dart';
 
 class HomeStore = HomeStoreBase with _$HomeStore;
 
 abstract class HomeStoreBase with Store {
   final HomeRepository _homeRepository;
+  final AuthRepository _authRepository;
 
   @observable
   HomeState state = HomeInitState();
@@ -15,12 +18,19 @@ abstract class HomeStoreBase with Store {
   @observable
   List<ProductModel> listProducts = [];
 
-  HomeStoreBase(this._homeRepository) {
+  @observable
+  UserModel? _userModel;
+
+  @computed
+  UserModel? get userModel => _userModel;
+
+  HomeStoreBase(this._homeRepository, this._authRepository) {
     _initialize();
   }
 
   @action
   Future<void> _initialize() async {
+    _userModel = await _authRepository.userLogged();
     await getListProducts();
   }
 
@@ -28,6 +38,7 @@ abstract class HomeStoreBase with Store {
   Future<void> getListProducts() async {
     state = HomeLoadingState();
     listProducts = (await _homeRepository.getTeamCurrent()).listProducts;
+
     state = HomeSucessState();
   }
 

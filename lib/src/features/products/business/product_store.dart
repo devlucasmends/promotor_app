@@ -13,7 +13,17 @@ abstract class ProductStoreBase with Store {
   @observable
   ProductState state = ProductInitState();
 
-  ProductStoreBase(this._productRepository);
+  @observable
+  List<ProductModel> listProducts = [];
+
+  ProductStoreBase(this._productRepository) {
+    _initialize();
+  }
+
+  @action
+  Future<void> _initialize() async {
+    await getListProducts();
+  }
 
   @action
   Future<void> addProduct(ProductModel productModel) async {
@@ -38,25 +48,41 @@ abstract class ProductStoreBase with Store {
   }
 
   @action
-  Future<String> getImage(ImageSource source) async {
+  Future<String> getImage(
+      {required ImageSource source, required String barCode}) async {
     state = ProductLoadingState();
-    final pickerImage = await _productRepository.getImage(source);
+    final localPathImage = await _productRepository.getImage(source);
+    final storagePath = await _productRepository.addImageStorage(
+        path: localPathImage, identifier: barCode);
     state = ProductSucessState();
-    return pickerImage;
+    return storagePath;
   }
 
   @action
-  Future<void> addImageStorage(String path, String identifier) async {
+  Future<void> getListProducts() async {
     state = ProductLoadingState();
-    await _productRepository.addImageStorage(path, identifier);
+    listProducts = await _productRepository.getListProducts();
     state = ProductSucessState();
   }
 
-  // @action
-  // Future<void> setImageProduct() async {
-  //   state = ProductLoadingState();
-  //   final path = await getImage(ImageSource.gallery);
-  //   await addImageStorage(path);
-  //   state = ProductState();
-  // }
+  @action
+  bool checkSingleBarCode({required String barCode}) {
+    state = ProductLoadingState();
+    int cont = 0;
+    bool test = true;
+    for (var element in listProducts) {
+      if (element.barCode == barCode) {
+        cont++;
+      }
+    }
+    if (cont > 0) {
+      test = false;
+      state = ProductInitState();
+    } else {
+      state = ProductSucessState();
+    }
+    return test;
+  }
+
+  //TODO: Criar Função que verifica se já existe o Código de Barras na Lista
 }
