@@ -12,11 +12,6 @@ import 'package:promotor_app/src/shared/exceptions/firebase_exception.dart'
     as fe;
 
 class FirebaseServiceImp implements FirebaseService {
-  //TODO
-  // FirebaseServiceImp() {
-  //   initialize();
-  // }
-
   void _throwFirebaseException(int statusCode, String message) {
     throw fe.FirebaseException(statusCode, message);
   }
@@ -188,7 +183,7 @@ class FirebaseServiceImp implements FirebaseService {
     return teamCurrent;
   }
 
-  @override //TODO: Verificar se é bom ou não
+  @override
   Future<void> editProduct({
     required ProductModel product,
     required int index,
@@ -196,12 +191,7 @@ class FirebaseServiceImp implements FirebaseService {
   }) async {
     final instanceFireStore = FirebaseFirestore.instance;
 
-    // final users = instanceFireStore.collection('users');
     final teams = instanceFireStore.collection('teams');
-
-    // final docUser = users.doc(FirebaseAuth.instance.currentUser!.uid);
-    // final snapshotUser = await docUser.get();
-    // final String idTeamCurrent = snapshotUser.get('team');
 
     final docTeam = teams.doc(idTeamCurrent);
     final snapshotTeam = await docTeam.get();
@@ -218,18 +208,14 @@ class FirebaseServiceImp implements FirebaseService {
     docTeam.update(teamCurrent.toJson());
   }
 
-  @override //TODO: Verificar se é bom ou não
-  Future<String> addImageStorage(
-      {required String path,
-      required String identifier,
-      required UserModel user}) async {
-    final instanceFireStore = FirebaseFirestore.instance;
+  @override
+  Future<String> addImageStorage({
+    required String path,
+    required String identifier,
+    required UserModel user,
+  }) async {
     final storage = FirebaseStorage.instance;
     String reference;
-
-    // final users = instanceFireStore.collection('users');
-    // final docUser = users.doc(FirebaseAuth.instance.currentUser!.uid);
-    // final snapshotUser = await docUser.get();
 
     File file = File(path);
 
@@ -285,18 +271,6 @@ class FirebaseServiceImp implements FirebaseService {
 
     teamCurrent.listUsers.removeAt(index);
     await teams.doc(uidTeam).update(teamCurrent.toJson());
-  }
-
-  @override
-  Future<UserModel> getUser() async {
-    final instance = FirebaseAuth.instance;
-    User? user = instance.currentUser;
-
-    final docUser =
-        FirebaseFirestore.instance.collection('users').doc(user!.uid);
-    final snapshot = await docUser.get();
-
-    return UserModel.fromJson(snapshot.data()!);
   }
 
   @override

@@ -44,8 +44,6 @@ abstract class FirebaseService {
     required int index,
   });
 
-  Future<UserModel> getUser();
-
   Future<void> updatePassword({
     required String oldPassword,
     required String newPassword,

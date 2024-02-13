@@ -1,5 +1,6 @@
 import 'package:promotor_app/src/shared/models/product_model.dart';
 import 'package:promotor_app/src/shared/models/team_model.dart';
+import 'package:promotor_app/src/shared/models/user_model.dart';
 import 'package:promotor_app/src/shared/services/firebase/firebase_service.dart';
 
 class HomeRepository {

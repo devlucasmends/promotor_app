@@ -56,6 +56,14 @@ mixin _$AuthStore on AuthStoreBase, Store {
     return _$_initializeAsyncAction.run(() => super._initialize());
   }
 
+  late final _$getUserAsyncAction =
+      AsyncAction('AuthStoreBase.getUser', context: context);
+
+  @override
+  Future<void> getUser() {
+    return _$getUserAsyncAction.run(() => super.getUser());
+  }
+
   late final _$signInAsyncAction =
       AsyncAction('AuthStoreBase.signIn', context: context);
 

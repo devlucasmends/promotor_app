@@ -7,7 +7,7 @@ class SettingsRepository {
   SettingsRepository(this._firebaseService);
 
   Future<UserModel?> getUser() async {
-    return await _firebaseService.getUser();
+    return await _firebaseService.userLogged();
   }
 
   Future<void> updatePassword(

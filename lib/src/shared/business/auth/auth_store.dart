@@ -28,8 +28,15 @@ abstract class AuthStoreBase with Store {
   Future<void> _initialize() async {
     state = AuthLoadingState();
     await _authRepository.initialize();
-    _userModel = await _authRepository.userLogged();
+    await getUser();
     state = AuthInitState();
+  }
+
+  @action
+  Future<void> getUser() async {
+    state = AuthLoadingState();
+    _userModel = await _authRepository.userLogged();
+    state = AuthSucessState();
   }
 
   @action

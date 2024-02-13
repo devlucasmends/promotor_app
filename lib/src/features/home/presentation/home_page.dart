@@ -98,6 +98,7 @@ class _HomePageState extends State<HomePage> {
         child: Observer(
           builder: (_) {
             if (home.state is HomeSucessState) {
+              authStore.getUser();
               listProducts = home.listProducts;
               return ListView.separated(
                 itemCount: listProducts.length,
@@ -208,8 +209,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   int getColorValidate(int differenceDays) {
-    final checkColor = home.checkColorValidate(differenceDays,
-        authStore.userModel!.redAlarm, authStore.userModel!.yellowAlarm);
+    final checkColor = home.checkColorValidate(
+      differenceDays,
+      authStore.userModel!.redAlarm,
+      authStore.userModel!.yellowAlarm,
+    );
     if (checkColor == 'redAlert') {
       return 0xFFFF0000;
     } else if (checkColor == 'yellowAlert') {

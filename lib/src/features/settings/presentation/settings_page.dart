@@ -156,6 +156,7 @@ class _SettingsPageState extends State<SettingsPage> {
           onPressed: () async {
             if (daysAlertController.text != '' &&
                 daysAlertController.text.isNotEmpty) {
+              context.pop();
               await settingsStore
                   .updateAlarm(
                 alert: alarm,
@@ -163,7 +164,7 @@ class _SettingsPageState extends State<SettingsPage> {
               )
                   .whenComplete(() {
                 daysAlertController.text = '';
-                context.pop();
+                // context.pop();
               });
             }
           },
